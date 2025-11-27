@@ -20,4 +20,6 @@ public class CapitecMock implements TransactionSource {
                 new RawTransaction(customerId, "Netflix Subscription", new BigDecimal("12.99"), LocalDateTime.now().minusDays(15))
         );
     }
+
+
 }

@@ -12,16 +12,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 @Service
 public class AggregationServiceImpl implements AggregationService {
-    private final List<TransactionSource> providers;
+
+    private final List<TransactionSource> txSources;
     private final TxCategorizationEngine engine;
-    public AggregationServiceImpl(List<TransactionSource> providers,
+
+    public AggregationServiceImpl(List<TransactionSource> txSources,
                                   TxCategorizationEngine engine) {
-        this.providers = providers;
+        this.txSources = txSources;
         this.engine = engine;
     }
     @Override
     public List<Transaction> getAllTransactions(String customerId) {
-        return providers.stream()
+        return txSources.stream()
                 .flatMap(p -> p.fetchTransactions(customerId).stream()
                         .map(raw -> engine.categorize(raw,
                                 p.getClass().getSimpleName())))

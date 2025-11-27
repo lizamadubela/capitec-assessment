@@ -1,11 +1,13 @@
 package za.co.capitecbank.assessment.service;
 
+import org.springframework.stereotype.Service;
 import za.co.capitecbank.assessment.domain.RawTransaction;
 import za.co.capitecbank.assessment.domain.Transaction;
 
 import java.math.BigDecimal;
 
-public class TxCatergorizationEngineImpl implements TxCategorizationEngine {
+@Service
+public class TxCategorizationEngineImpl implements TxCategorizationEngine {
 
 
     @Override
