@@ -3,3 +3,6 @@ port: 8080
 spring:
 main:
 allow-bean-definition-overriding: true
+
+app:
+  data-file: classpath:transactions.csv
