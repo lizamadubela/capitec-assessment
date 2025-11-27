@@ -74,7 +74,7 @@ public class DataLoader {
                 var raws = p.fetchTransactions(demoCustomer);
                 var entities = raws.stream()
                         .map(r -> engine.categorize(r, p.getClass().getSimpleName()))
-                        .map(t -> new TransactionEntity(t.getAccountId(), t.getAmount(),
+                        .map(t -> new TransactionEntity(t.getCustomerId(), t.getAmount(),
                                 t.getTimestamp(), t.getDescription(), t.getCategory(), t.getSource()))
                         .collect(Collectors.toList());
                 repository.saveAll(entities);
@@ -85,7 +85,7 @@ public class DataLoader {
 
     private TransactionEntity parseAndMapToEntity(String line, TxCategorizationEngine engine) {
         var cols = line.split(",", -1);
-        var accountId = cols.length > 0 ? cols[0].trim() : "";
+        var customerId = cols.length > 0 ? cols[0].trim() : "";
         var description = cols.length > 1 ? cols[1].trim() : "";
         var amountStr = cols.length > 2 ? cols[2].trim() : "0";
         var tsStr = cols.length > 3 ? cols[3].trim() : "";
@@ -106,11 +106,11 @@ public class DataLoader {
         }
 
         // Direct mapping: create RawTransaction, categorize, map to entity
-        var raw = new RawTransaction(accountId, description, amount, ts);
+        var raw = new RawTransaction(customerId, description, amount, ts);
         var txn = engine.categorize(raw, source);
 
         return new TransactionEntity(
-                txn.getAccountId(),
+                txn.getCustomerId(),
                 txn.getAmount(),
                 txn.getTimestamp(),
                 txn.getDescription(),

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,7 +37,7 @@ public class AggregationServiceImpl implements AggregationService {
             List<TransactionEntity> entities = raws.stream()
                     .map(r -> engine.categorize(r,
                             p.getClass().getSimpleName()))
-                    .map(t -> new TransactionEntity(t.getAccountId(),
+                    .map(t -> new TransactionEntity(t.getCustomerId(),
                             t.getAmount(), t.getTimestamp(), t.getDescription(), t.getCategory(),
                             t.getSource()))
                     .collect(Collectors.toList());
@@ -44,8 +45,8 @@ public class AggregationServiceImpl implements AggregationService {
         });
 // read back from DB
         return
-                repository.findByAccountIdOrderByTimestampDesc(customerId).stream()
-                        .map(e -> new Transaction(e.getAccountId(), e.getAmount(),
+                repository.findByCustomerIdOrderByTimestampDesc(customerId).stream()
+                        .map(e -> new Transaction(UUID.randomUUID().toString(), e.getCustomerId(), e.getAmount(),
                                 e.getTimestamp(), e.getDescription(), e.getCategory(), e.getSource()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                         .toList();
@@ -53,8 +54,8 @@ public class AggregationServiceImpl implements AggregationService {
     @Override
     public Map<String, BigDecimal> getTotalsByCategory(String customerId) {
         return
-                repository.findByAccountIdOrderByTimestampDesc(customerId).stream()
-                        .map(e -> new Transaction(e.getAccountId(), e.getAmount(),
+                repository.findByCustomerIdOrderByTimestampDesc(customerId).stream()
+                        .map(e -> new Transaction(UUID.randomUUID().toString(), e.getCustomerId(), e.getAmount(),
                                 e.getTimestamp(), e.getDescription(), e.getCategory(), e.getSource()))
                         .collect(Collectors.groupingBy(Transaction::getCategory,
                                 Collectors.mapping(Transaction::getAmount,
@@ -68,9 +69,9 @@ public class AggregationServiceImpl implements AggregationService {
         LocalDateTime endDt = end.atTime(23,59,59);
 
         return
-                repository.findByAccountIdAndTimestampBetweenOrderByTimestampDesc(customerId,
+                repository.findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(customerId,
                                 startDt, endDt).stream()
-                        .map(e -> new Transaction(e.getAccountId(), e.getAmount(),
+                        .map(e -> new Transaction(UUID.randomUUID().toString(),e.getCustomerId(), e.getAmount(),
                                 e.getTimestamp(), e.getDescription(), e.getCategory(), e.getSource()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                         .toList();

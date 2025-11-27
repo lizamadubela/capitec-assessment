@@ -1,0 +1,33 @@
+# Transaction Aggregator (Spring Boot, Java 21)
+Minimal demo service that aggregates transaction records from multiple mock
+providers, categorizes them and exposes aggregation APIs.
+## Requirements
+- JDK 21
+- Maven 3.8+
+- Docker (optional, for container run)
+## Build and run locally (without Docker)
+1. Build:
+```bash
+mvn clean package -DskipTests
+Run:
+java -jar target/transaction-aggregator-0.0.1-SNAPSHOT.jar
+The service will start on port 8080 .
+Build and run with Docker
+Build the image:
+docker build -t txn-aggregator:0.0.1 .
+Run the container:
+1.
+1.
+1.
+12
+docker run -p 8080:8080 --name txn-aggregator txn-aggregator:0.0.1
+Endpoints
+GET /api/transactions/{customerId} — all transactions (categorized).
+GET /api/transactions/{customerId}/categories — totals grouped by category.
+GET /api/transactions/{customerId}/range?start=2025-01-01&end=2025-12-31 —
+transactions in provided date range.
+Example:
+curl http://localhost:8080/api/transactions/CUST-1
+curl http://localhost:8080/api/transactions/CUST-1/categories
+curl "http://localhost:8080/api/transactions/CUST-1/range?
+start=2025-01-01&end=2025-12-31"

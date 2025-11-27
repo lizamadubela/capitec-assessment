@@ -5,21 +5,21 @@ import java.time.LocalDateTime;
 
 
 public class RawTransaction {
-    private final String accountId;
+    private final String customerId;
     private final String description;
     private final BigDecimal amount;
     private final LocalDateTime timestamp;
 
 
-    public RawTransaction(String accountId, String description, BigDecimal amount, LocalDateTime timestamp) {
-        this.accountId = accountId;
+    public RawTransaction(String customerId, String description, BigDecimal amount, LocalDateTime timestamp) {
+        this.customerId = customerId;
         this.description = description;
         this.amount = amount;
         this.timestamp = timestamp;
     }
 
 
-    public String getAccountId() { return accountId; }
+    public String getCustomerId() { return customerId; }
     public String getDescription() { return description; }
     public BigDecimal getAmount() { return amount; }
     public LocalDateTime getTimestamp() { return timestamp; }

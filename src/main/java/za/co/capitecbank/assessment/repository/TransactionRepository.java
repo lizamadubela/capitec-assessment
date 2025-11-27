@@ -12,6 +12,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {
-    List<TransactionEntity> findByAccountIdOrderByTimestampDesc(String accountId);
-    List<TransactionEntity> findByAccountIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
+    List<TransactionEntity> findByCustomerIdOrderByTimestampDesc(String accountId);
+    List<TransactionEntity> findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
 }

@@ -5,6 +5,7 @@ import za.co.capitecbank.assessment.domain.RawTransaction;
 import za.co.capitecbank.assessment.domain.Transaction;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 public class TxCategorizationEngineImpl implements TxCategorizationEngine {
@@ -33,7 +34,7 @@ public class TxCategorizationEngineImpl implements TxCategorizationEngine {
         }
 
 
-        return new Transaction(raw.getAccountId(), raw.getAmount(), raw.getTimestamp(), raw.getDescription(), category, source);
+        return new Transaction(UUID.randomUUID().toString(),raw.getCustomerId(), raw.getAmount(), raw.getTimestamp(), raw.getDescription(), category, source);
     }
 }
 

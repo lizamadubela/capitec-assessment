@@ -1,5 +1,5 @@
-customerid,description,amount,timestamp,source
-CUST-1,Grocery Store - SPAR,120.55,2025-11-20T10:15:30,pos
-CUST-1,Uber BV - Ride,47.30,2025-11-21T19:05:00,online
-CUST-1,Salary,3500.00,2025-11-01T00:00:00,
-CUST-2,Starbucks Coffee,5.80,2025-11-27T08:12:00,seed-file
+transactionId,customerId,description,amount,timestamp,source
+CUST-1,Grocery Store - SPAR,120.55,2025-11-20T10:15:30,h2 database
+CUST-1,Uber BV - Ride,47.30,2025-11-21T19:05:00, h2 database
+CUST-1,Salary,3500.00,2025-11-01T00:00:00, h2 database
+CUST-2,Starbucks Coffee,5.80,2025-11-27T08:12:00,h2 database

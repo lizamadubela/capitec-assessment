@@ -12,11 +12,11 @@ public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long transactionId;
 
 
     @Column(nullable = false)
-    private String accountId;
+    private String customerId;
 
 
     @Column(nullable = false)
@@ -35,8 +35,8 @@ public class TransactionEntity {
     public TransactionEntity() {}
 
 
-    public TransactionEntity(String accountId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
-        this.accountId = accountId;
+    public TransactionEntity(String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
+        this.customerId = customerId;
         this.amount = amount;
         this.timestamp = timestamp;
         this.description = description;
@@ -45,8 +45,8 @@ public class TransactionEntity {
     }
 
 
-    public Long getId() { return id; }
-    public String getAccountId() { return accountId; }
+    public Long getTransactionId() { return transactionId; }
+    public String getCustomerId() { return customerId; }
     public BigDecimal getAmount() { return amount; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public String getDescription() { return description; }
@@ -54,8 +54,8 @@ public class TransactionEntity {
     public String getSource() { return source; }
 
 
-    public void setId(Long id) { this.id = id; }
-    public void setAccountId(String accountId) { this.accountId = accountId; }
+    public void setTransactionId(Long id) { this.transactionId = id; }
+    public void setCustomerId(String customerId) { this.customerId = customerId; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     public void setDescription(String description) { this.description = description; }

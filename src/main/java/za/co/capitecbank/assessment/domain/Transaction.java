@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 
 
 public class Transaction {
-    private final String accountId;
+
+    private final String transactionId;
+    private final String customerId;
     private final BigDecimal amount;
     private final LocalDateTime timestamp;
     private final String description;
@@ -13,8 +15,9 @@ public class Transaction {
     private final String source;
 
 
-    public Transaction(String accountId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
-        this.accountId = accountId;
+    public Transaction(String transactionId, String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
+        this.transactionId = transactionId;
+        this.customerId = customerId;
         this.amount = amount;
         this.timestamp = timestamp;
         this.description = description;
@@ -23,7 +26,8 @@ public class Transaction {
     }
 
 
-    public String getAccountId() { return accountId; }
+    public String getTransactionId() { return transactionId; }
+    public String getCustomerId() { return customerId; }
     public BigDecimal getAmount() { return amount; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public String getDescription() { return description; }
