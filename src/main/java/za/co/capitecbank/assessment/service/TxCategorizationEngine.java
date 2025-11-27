@@ -1,4 +1,9 @@
 package za.co.capitecbank.assessment.service;
 
-public class TxCategorizationEngine {
+
+import za.co.capitecbank.assessment.domain.RawTransaction;
+import za.co.capitecbank.assessment.domain.Transaction;
+
+public interface TxCategorizationEngine {
+    Transaction categorize(RawTransaction raw, String source);
 }
