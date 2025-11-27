@@ -1,4 +1,9 @@
 package za.co.capitecbank.assessment.tx_source;
 
-public class TransactionSource {
+import za.co.capitecbank.assessment.domain.RawTransaction;
+
+import java.util.List;
+
+public interface TransactionSource {
+    List<RawTransaction> fetchTransactions(String customerId);
 }
