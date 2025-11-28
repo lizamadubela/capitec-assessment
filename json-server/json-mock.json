@@ -1,0 +1,37 @@
+{
+  "transactions": [
+    {
+      "transactionId": "tx-1",
+      "customerId": "CUST-2",
+      "description": "Shoprite",
+      "amount": 125.56,
+      "timestamp": "2025-11-20T10:15:30",
+      "source": "json-server"
+    },
+    {
+      "transactionId": "tx-2",
+      "customerId": "CUST-2",
+      "description": "Bolt - Ride",
+      "amount": 470.15,
+      "timestamp": "2025-11-21T19:05:00",
+      "source": "json-server"
+    },
+    {
+      "transactionId": "tx-3",
+      "customerId": "CUST-3",
+      "description": "Takealot",
+      "amount": 3445.00,
+      "timestamp": "2025-11-27T08:12:00",
+      "source": "json-server"
+    },
+    {
+      "transactionId": "tx-4",
+      "customerId": "CUST-1",
+      "description": "KFC",
+      "amount": 3445.00,
+      "timestamp": "2025-11-27T08:12:00",
+      "source": "json-server"
+    }
+
+  ]
+}
