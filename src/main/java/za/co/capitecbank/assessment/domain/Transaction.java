@@ -1,9 +1,11 @@
 package za.co.capitecbank.assessment.domain;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+@Getter
 public class Transaction {
 
     private final String transactionId;
@@ -24,13 +26,4 @@ public class Transaction {
         this.category = category;
         this.source = source;
     }
-
-
-    public String getTransactionId() { return transactionId; }
-    public String getCustomerId() { return customerId; }
-    public BigDecimal getAmount() { return amount; }
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public String getDescription() { return description; }
-    public String getCategory() { return category; }
-    public String getSource() { return source; }
 }
