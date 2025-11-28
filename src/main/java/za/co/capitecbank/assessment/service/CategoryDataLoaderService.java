@@ -1,10 +1,8 @@
 package za.co.capitecbank.assessment.service;
 
-import jakarta.annotation.PostConstruct;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -25,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class CategoryService {
+public class CategoryDataLoaderService {
 
     private final TransactionCategoryRepository categoryRepository;
     private final ResourceLoader resourceLoader;
@@ -34,10 +32,10 @@ public class CategoryService {
     private static final Duration CACHE_DURATION = Duration.ofMinutes(30);
 
     @Value("${category.csv.path:classpath:categories.csv}")
-    private String csvFilePath;
+    private String categoriesFile;
 
-    public CategoryService(TransactionCategoryRepository categoryRepository,
-                           ResourceLoader resourceLoader) {
+    public CategoryDataLoaderService(TransactionCategoryRepository categoryRepository,
+                                     ResourceLoader resourceLoader) {
         this.categoryRepository = categoryRepository;
         this.resourceLoader = resourceLoader;
     }
@@ -47,6 +45,7 @@ public class CategoryService {
         try {
             loadCategoriesFromCsv();
             refreshCache();
+            log.info("Categories initialized successfully");
         } catch (Exception e) {
             log.error("Failed to load categories from CSV: {}", e.getMessage());
             throw new RuntimeException("Failed to initialize categories", e);
@@ -60,14 +59,14 @@ public class CategoryService {
      */
     public void loadCategoriesFromCsv() {
         try {
-            Resource resource = resourceLoader.getResource(csvFilePath);
+            Resource resource = resourceLoader.getResource(categoriesFile);
 
             if (!resource.exists()) {
-                log.warn("CSV file not found at {}, skipping category load", csvFilePath);
+                log.warn("CSV file not found at {}, skipping category load", categoriesFile);
                 return;
             }
 
-            log.info("Loading categories from CSV: {}", csvFilePath);
+            log.info("Loading categories from CSV: {}", categoriesFile);
 
             try (var is = resource.getInputStream();
                  var reader = new BufferedReader(new InputStreamReader(is))) {
@@ -78,23 +77,23 @@ public class CategoryService {
                         .filter(line -> !line.isEmpty())
                         .filter(line -> !line.startsWith("#"))
                         .skip(1) // skip header
-                        .map(this::parseCsvLineAndSave)
+                        .map(this::parseCsvTxCategoryLineAndSave)
                         .filter(cat -> cat != null)
                         .collect(Collectors.toList());
 
                 if (!categories.isEmpty()) {
                     log.info("Successfully loaded {} categories from CSV", categories.size());
                 } else {
-                    log.info("No categories found in {}", csvFilePath);
+                    log.info("No categories found in {}", categoriesFile);
                 }
             }
         } catch (Exception e) {
-            log.error("Failed to load categories from '{}': {}", csvFilePath, e.getMessage());
+            log.error("Failed to load categories from '{}': {}", categoriesFile, e.getMessage());
             throw new RuntimeException("Failed to load categories", e);
         }
     }
 
-    private TransactionCategory parseCsvLineAndSave(String line) {
+    private TransactionCategory parseCsvTxCategoryLineAndSave(String line) {
         try {
             // Parse CSV line (handles quotes and commas within quotes)
             String[] parts = parseCsvLine(line);
@@ -222,32 +221,4 @@ public class CategoryService {
                 .filter(cat -> cat.getName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Category not found: " + name));
-    }
-
-    // Admin methods for managing categories
-    public TransactionCategory addCategory(String name, String displayName, boolean requiresPositiveAmount) {
-        TransactionCategory category = new TransactionCategory(name, displayName, requiresPositiveAmount);
-        return categoryRepository.save(category);
-    }
-
-    public void addKeywordToCategory(Long categoryId, String keyword) {
-        TransactionCategory category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-
-        CategoryKeyword kw = new CategoryKeyword(keyword);
-        kw.setCategory(category);
-        category.getKeywords().add(kw);
-
-        categoryRepository.save(category);
-        refreshCache();
-    }
-
-    public void removeKeywordFromCategory(Long categoryId, String keyword) {
-        TransactionCategory category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-
-        category.getKeywords().removeIf(kw -> kw.getKeyword().equalsIgnoreCase(keyword));
-        categoryRepository.save(category);
-        refreshCache();
-    }
-}
+    }}

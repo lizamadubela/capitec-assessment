@@ -28,7 +28,6 @@ public class JsonServerSource implements TransactionSource {
 
     @Override
     public List<RawTransaction> fetchTransactions(String customerId) {
-        // JSON Server supports filtering like /transactions?accountId=CUST-1
         String url = baseUrl + "/transactions?customerId=" + customerId;
 
         ResponseEntity<List<Map<String, Object>>> resp = restTemplate.exchange(

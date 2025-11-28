@@ -5,15 +5,14 @@ import za.co.capitecbank.assessment.domain.RawTransaction;
 import za.co.capitecbank.assessment.domain.Transaction;
 import za.co.capitecbank.assessment.domain.entity.TransactionCategory;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
 public class TxCategorizationEngineImpl implements TxCategorizationEngine {
 
-    private final CategoryService categoryService;
+    private final CategoryDataLoaderService categoryService;
 
-    public TxCategorizationEngineImpl(CategoryService categoryService) {
+    public TxCategorizationEngineImpl(CategoryDataLoaderService categoryService) {
         this.categoryService = categoryService;
     }
 
