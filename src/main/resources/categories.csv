@@ -1,0 +1,10 @@
+category_name,display_name,requires_positive_amount,keywords
+FOOD,Food,false,"grocery,spar,supermarket,coffee,starbucks,restaurant,takeaway,KFC, Shoprite"
+TRANSPORT,Transport,false,"uber,taxi,ride,bolt,lyft,metro,bus"
+ENTERTAINMENT,Entertainment,false,"netflix,spotify,subscription,cinema,movie,hulu,disney"
+INCOME,Income,true,"salary,bonus,paycheck,wages,income,deposit,refund"
+FUEL,Fuel,false,"caltex,bp garage,shell,engen,petrol,diesel"
+UTILITIES,Utilities,false,"electricity,water,internet,wifi,vodacom,mtn,cell c"
+HEALTHCARE,Healthcare,false,"pharmacy,doctor,hospital,clinic,medical,dentist"
+SHOPPING,Shopping,false,"amazon,takealot,mall,clothing,shoes"
+OTHER,Other,false,""
