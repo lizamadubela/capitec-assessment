@@ -6,3 +6,5 @@ allow-bean-definition-overriding: true
 
 app:
   data-file: classpath:transactions.csv
+  json-server:
+    base-url: http://localhost:3000
