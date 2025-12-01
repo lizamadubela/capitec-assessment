@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+       http://www.liquibase.org/xml/ns/dbchangelog
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd">
+
+    <!-- Create schema if not exists -->
+    <changeSet id="0" author="Liza Madubela">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS data_aggregation;
+        </sql>
+    </changeSet>
+
+    <!-- Transaction table -->
+    <changeSet id="0-1" author="Liza Madubela">
+        <createTable tableName="transaction" schemaName="data_aggregation">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+<!--            <column name="transaction_id" type="VARCHAR(50)">-->
+<!--                <constraints nullable="false" unique="true"/>-->
+<!--            </column>-->
+            <column name="customer_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="VARCHAR(100)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Category table -->
+    <changeSet id="0-2" author="Liza Madubela">
+        <createTable tableName="transaction_category" schemaName="data_aggregation">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="requires_positive_amount" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="keywords" type="VARCHAR(500)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create category_keyword table -->
+    <changeSet id="0-3" author="Liza Madubela">
+        <createTable tableName="category_keyword" schemaName="data_aggregation">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="keyword" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Add foreign key to TransactionCategory table -->
+    <changeSet id="0-4" author="Liza Madubela">
+        <addForeignKeyConstraint
+                baseTableName="category_keyword"
+                baseColumnNames="category_id"
+                referencedTableName="transaction_category"
+                referencedColumnNames="id"
+                constraintName="fk_category_keyword_transaction_category"
+                baseTableSchemaName="data_aggregation"
+                referencedTableSchemaName="data_aggregation"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

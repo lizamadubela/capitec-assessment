@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import za.co.capitecbank.assessment.domain.RawTransaction;
-import za.co.capitecbank.assessment.domain.entity.TransactionEntity;
+import za.co.capitecbank.assessment.domain.entity.Transaction;
 import za.co.capitecbank.assessment.repository.TransactionRepository;
 
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-@Order(2) // Load after CategoryService (which has @Order(1) implicitly)
+@Order(2)
 public class TransactionDataLoaderService {
 
     private final TransactionRepository transactionRepository;
@@ -78,7 +78,7 @@ public class TransactionDataLoaderService {
         }
     }
 
-    private TransactionEntity parseCsvTxLineAndSave(String line) {
+    private Transaction parseCsvTxLineAndSave(String line) {
         try {
             // Parse CSV line (handles quotes and commas within quotes)
             String[] parts = parseCsvLine(line);
@@ -112,7 +112,7 @@ public class TransactionDataLoaderService {
             var rawTransaction = new RawTransaction(customerId, description, amount, timestamp);
             var categorizedTransaction = categorizationEngine.categorize(rawTransaction, source);
 
-            TransactionEntity entity = new TransactionEntity(
+            Transaction entity = new Transaction(
                     categorizedTransaction.getCustomerId(),
                     categorizedTransaction.getAmount(),
                     categorizedTransaction.getTimestamp(),

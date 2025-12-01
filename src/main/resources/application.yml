@@ -1,8 +1,27 @@
 server:
-port: 8080
+  port: 8081
+
 spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:./data_aggregation;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none  # Let Liquibase handle schema management
+  liquibase:
+    enabled: true
+    default-schema: data_aggregation
+    change-log: classpath:liquibase/liquibase-changeLog.xml
+    liquibase-schema: public  # Schema where Liquibase tracking tables are stored
+
 main:
-allow-bean-definition-overriding: true
+  allow-bean-definition-overriding: true
 
 app:
   data-file: classpath:transactions.csv

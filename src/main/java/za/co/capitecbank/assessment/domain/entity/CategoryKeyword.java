@@ -3,24 +3,22 @@ package za.co.capitecbank.assessment.domain.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import za.co.capitecbank.assessment.service.TxCategorizationEngineImpl;
 
+@Getter
+@Setter
 @Entity
-@Table(name = "category_keywords")
+@Table(name = "category_keyword", schema = "data_aggregation")
 public class CategoryKeyword {
-    @Getter
-    @Setter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
     @Column(nullable = false)
     private String keyword;
 
-    @Setter
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)  // ✅ Changed from "id" to "category_id"
     private TransactionCategory category;
 
     public CategoryKeyword() {}
@@ -28,5 +26,4 @@ public class CategoryKeyword {
     public CategoryKeyword(String keyword) {
         this.keyword = keyword.toLowerCase();
     }
-
 }

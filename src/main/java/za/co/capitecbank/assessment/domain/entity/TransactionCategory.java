@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction_categories")
+@Table(name = "transaction_category", schema = "data_aggregation")
 public class TransactionCategory {
 
     @Id
@@ -20,14 +20,13 @@ public class TransactionCategory {
     @Column(unique = true, nullable = false)
     private String name;
 
-
     @Column(name = "display_name")
     private String displayName;
 
     @Column(name = "requires_positive_amount")
     private boolean requiresPositiveAmount = false;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)  // ✅ Changed from "name" to "category"
     private List<CategoryKeyword> keywords = new ArrayList<>();
 
     public TransactionCategory() {}
@@ -37,6 +36,4 @@ public class TransactionCategory {
         this.displayName = displayName;
         this.requiresPositiveAmount = requiresPositiveAmount;
     }
-
 }
-
