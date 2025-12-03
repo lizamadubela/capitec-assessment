@@ -1,4 +1,5 @@
 package za.co.capitecbank.assessment.service;
+
 import za.co.capitecbank.assessment.domain.Transaction;
 
 import java.math.BigDecimal;

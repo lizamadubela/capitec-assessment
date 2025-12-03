@@ -1,9 +1,11 @@
-package za.co.capitecbank.assessment.service;
+package za.co.capitecbank.assessment.service.impl;
 
 import org.springframework.stereotype.Service;
-import za.co.capitecbank.assessment.domain.RawTransaction;
+import za.co.capitecbank.assessment.domain.entity.RawTransaction;
 import za.co.capitecbank.assessment.domain.Transaction;
 import za.co.capitecbank.assessment.domain.entity.TransactionCategory;
+import za.co.capitecbank.assessment.service.CategoryDataLoaderService;
+import za.co.capitecbank.assessment.service.TxCategorizationEngine;
 
 import java.util.UUID;
 

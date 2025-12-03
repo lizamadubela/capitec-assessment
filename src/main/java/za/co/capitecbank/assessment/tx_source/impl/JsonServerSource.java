@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.tx_source;
+package za.co.capitecbank.assessment.tx_source.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -6,7 +6,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import za.co.capitecbank.assessment.domain.RawTransaction;
+import za.co.capitecbank.assessment.domain.entity.RawTransaction;
+import za.co.capitecbank.assessment.tx_source.TransactionSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public class JsonServerSource implements TransactionSource {
     private RawTransaction mapToRaw(Map<String, Object> m) {
         String customerId = (String) m.getOrDefault("customerId", "");
         String description = (String) m.getOrDefault("description", "");
+        String source = (String) m.getOrDefault("source", "");
         BigDecimal amount = BigDecimal.ZERO;
         Object amountObj = m.get("amount");
         if (amountObj != null) {
@@ -57,6 +59,6 @@ public class JsonServerSource implements TransactionSource {
         } catch (Exception ignored) {
         }
 
-        return new RawTransaction(customerId, description, amount, timestamp);
+        return new RawTransaction(customerId, description, amount, timestamp, source);
     }
 }

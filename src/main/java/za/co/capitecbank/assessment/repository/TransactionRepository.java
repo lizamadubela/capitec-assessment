@@ -3,7 +3,7 @@ package za.co.capitecbank.assessment.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import za.co.capitecbank.assessment.domain.entity.Transaction;
+import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
 
 
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByCustomerIdOrderByTimestampDesc(String accountId);
-    List<Transaction> findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
+public interface TransactionRepository extends JpaRepository<AggregatedTransaction, Long> {
+    List<AggregatedTransaction> findByCustomerIdOrderByTimestampDesc(String accountId);
+    List<AggregatedTransaction> findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
 }

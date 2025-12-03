@@ -27,7 +27,7 @@
     {
       "transactionId": "tx-4",
       "customerId": "CUST-1",
-      "description": "KFC",
+      "description": "KFC purchase",
       "amount": 3445.00,
       "timestamp": "2025-11-27T08:12:00",
       "source": "json-server"

@@ -1,9 +1,12 @@
-package za.co.capitecbank.assessment.service;
+package za.co.capitecbank.assessment.service.impl;
 
 import org.springframework.stereotype.Service;
-import za.co.capitecbank.assessment.domain.RawTransaction;
-import za.co.capitecbank.assessment.domain.entity.Transaction;
+import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
+import za.co.capitecbank.assessment.domain.entity.RawTransaction;
+import za.co.capitecbank.assessment.repository.RawTransactionRepository;
 import za.co.capitecbank.assessment.repository.TransactionRepository;
+import za.co.capitecbank.assessment.service.AggregationService;
+import za.co.capitecbank.assessment.service.TxCategorizationEngine;
 import za.co.capitecbank.assessment.tx_source.TransactionSource;
 
 import java.math.BigDecimal;
@@ -17,26 +20,28 @@ import java.util.stream.Collectors;
 
 @Service
 public class AggregationServiceImpl implements AggregationService {
-    private final List<TransactionSource> providers;
+    private final List<TransactionSource> sources;
     private final TxCategorizationEngine engine;
     private final TransactionRepository repository;
+    private final RawTransactionRepository rawTransactionRepository;
 
-    public AggregationServiceImpl(List<TransactionSource> providers,
-                                  TxCategorizationEngine engine, TransactionRepository repository) {
-        this.providers = providers;
+    public AggregationServiceImpl(List<TransactionSource> sources,
+                                  TxCategorizationEngine engine, TransactionRepository repository, RawTransactionRepository rawTransactionRepository) {
+        this.sources = sources;
         this.engine = engine;
         this.repository = repository;
+        this.rawTransactionRepository = rawTransactionRepository;
     }
 
     @Override
     public List<za.co.capitecbank.assessment.domain.Transaction> getAllTransactions(String customerId) {
 // fetch and save
-        providers.forEach(p -> {
-            List<RawTransaction> raws = p.fetchTransactions(customerId);
-            List<Transaction> entities = raws.stream()
+        sources.forEach(transactionSource -> {
+            List<RawTransaction> rawTransactions = transactionSource.fetchTransactions(customerId);
+            List<AggregatedTransaction> entities = rawTransactions.stream()
                     .map(r -> engine.categorize(r,
-                            p.getClass().getSimpleName()))
-                    .map(t -> new Transaction(t.getCustomerId(),
+                            transactionSource.getClass().getSimpleName()))
+                    .map(t -> new AggregatedTransaction(t.getCustomerId(),
                             t.getAmount(), t.getTimestamp(), t.getDescription(), t.getCategory(),
                             t.getSource()))
                     .collect(Collectors.toList());

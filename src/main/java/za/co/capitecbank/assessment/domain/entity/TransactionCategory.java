@@ -17,7 +17,7 @@ public class TransactionCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "display_name")
@@ -26,7 +26,7 @@ public class TransactionCategory {
     @Column(name = "requires_positive_amount")
     private boolean requiresPositiveAmount = false;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)  // ✅ Changed from "name" to "category"
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<CategoryKeyword> keywords = new ArrayList<>();
 
     public TransactionCategory() {}

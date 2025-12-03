@@ -1,7 +1,10 @@
 package za.co.capitecbank.assessment.service;
 
-
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -11,12 +14,11 @@ import za.co.capitecbank.assessment.domain.entity.CategoryKeyword;
 import za.co.capitecbank.assessment.domain.entity.TransactionCategory;
 import za.co.capitecbank.assessment.repository.TransactionCategoryRepository;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ public class CategoryDataLoaderService {
 
     private final TransactionCategoryRepository categoryRepository;
     private final ResourceLoader resourceLoader;
+    private final CsvMapper csvMapper;
     private List<TransactionCategory> cachedCategories;
     private LocalDateTime lastCacheUpdate;
     private static final Duration CACHE_DURATION = Duration.ofMinutes(30);
@@ -38,6 +41,7 @@ public class CategoryDataLoaderService {
                                      ResourceLoader resourceLoader) {
         this.categoryRepository = categoryRepository;
         this.resourceLoader = resourceLoader;
+        this.csvMapper = new CsvMapper();
     }
 
     @PostConstruct
@@ -45,6 +49,7 @@ public class CategoryDataLoaderService {
         try {
             loadCategoriesFromCsv();
             refreshCache();
+            logAllLoadedKeywords();
             log.info("Categories initialized successfully");
         } catch (Exception e) {
             log.error("Failed to load categories from CSV: {}", e.getMessage());
@@ -53,7 +58,7 @@ public class CategoryDataLoaderService {
     }
 
     /**
-     * Loads categories from CSV file.
+     * Loads categories from CSV file using Jackson ObjectMapper.
      * CSV Format: category_name,display_name,requires_positive_amount,keywords
      * Example: FOOD,Food,false,"grocery,spar,supermarket,coffee"
      */
@@ -68,16 +73,19 @@ public class CategoryDataLoaderService {
 
             log.info("Loading categories from CSV: {}", categoriesFile);
 
-            try (var is = resource.getInputStream();
-                 var reader = new BufferedReader(new InputStreamReader(is))) {
+            CsvSchema schema = CsvSchema.emptySchema()
+                    .withHeader()
+                    .withColumnSeparator(',')
+                    .withQuoteChar('"');
 
-                // Expected CSV header: category_name,display_name,requires_positive_amount,keywords
-                var categories = reader.lines()
-                        .map(String::trim)
-                        .filter(line -> !line.isEmpty())
-                        .filter(line -> !line.startsWith("#"))
-                        .skip(1) // skip header
-                        .map(this::parseCsvTxCategoryLineAndSave)
+            try (InputStream is = resource.getInputStream()) {
+                MappingIterator<CategoryCsvRow> iterator = csvMapper
+                        .readerFor(CategoryCsvRow.class)
+                        .with(schema)
+                        .readValues(is);
+
+                List<TransactionCategory> categories = iterator.readAll().stream()
+                        .map(this::mapAndSaveCategory)
                         .filter(cat -> cat != null)
                         .collect(Collectors.toList());
 
@@ -93,20 +101,12 @@ public class CategoryDataLoaderService {
         }
     }
 
-    private TransactionCategory parseCsvTxCategoryLineAndSave(String line) {
+    private TransactionCategory mapAndSaveCategory(CategoryCsvRow row) {
         try {
-            // Parse CSV line (handles quotes and commas within quotes)
-            String[] parts = parseCsvLine(line);
-
-            if (parts.length < 4) {
-                log.warn("Invalid CSV line (expected 4 columns): {}", line);
-                return null;
-            }
-
-            String categoryName = parts[0].trim();
-            String displayName = parts[1].trim();
-            boolean requiresPositiveAmount = Boolean.parseBoolean(parts[2].trim());
-            String keywordsStr = parts[3].trim();
+            String categoryName = row.getCategoryName().trim();
+            String displayName = row.getDisplayName().trim();
+            boolean requiresPositiveAmount = row.isRequiresPositiveAmount();
+            String keywordsStr = row.getKeywords() != null ? row.getKeywords().trim() : "";
 
             // Check if category already exists
             Optional<TransactionCategory> existingCategory = categoryRepository.findByName(categoryName);
@@ -117,62 +117,85 @@ public class CategoryDataLoaderService {
                 category.setDisplayName(displayName);
                 category.setRequiresPositiveAmount(requiresPositiveAmount);
                 category.getKeywords().clear();
+                log.info("Updating existing category: {}", categoryName);
             } else {
                 category = new TransactionCategory(categoryName, displayName, requiresPositiveAmount);
+                log.info("Creating new category: {}", categoryName);
             }
 
             // Parse and add keywords
             if (!keywordsStr.isEmpty()) {
-                String[] keywords = keywordsStr.split(",");
-                for (String keyword : keywords) {
-                    String trimmedKeyword = keyword.trim();
-                    if (!trimmedKeyword.isEmpty()) {
-                        CategoryKeyword kw = new CategoryKeyword(trimmedKeyword);
-                        kw.setCategory(category);
-                        category.getKeywords().add(kw);
-                    }
-                }
+                Arrays.stream(keywordsStr.split(","))
+                        .map(String::trim)
+                        .filter(kw -> !kw.isEmpty())
+                        .forEach(keyword -> {
+                            CategoryKeyword kw = new CategoryKeyword(keyword);
+                            kw.setCategory(category);
+                            category.getKeywords().add(kw);
+                        });
             }
 
             categoryRepository.save(category);
-            log.debug("Saved category: {} with {} keywords", categoryName, category.getKeywords().size());
+
+            // Enhanced logging with all keywords
+            String keywordsList = category.getKeywords().stream()
+                    .map(CategoryKeyword::getKeyword)
+                    .collect(Collectors.joining(", "));
+
+            log.info("✓ Saved category: {} (Display: {}) | Keywords [{}]: {}",
+                    categoryName,
+                    displayName,
+                    category.getKeywords().size(),
+                    keywordsList.isEmpty() ? "NONE" : keywordsList);
 
             return category;
 
         } catch (Exception e) {
-            log.error("Error parsing CSV line: {}", line, e);
+            log.error("Error mapping category row: {}", row, e);
             return null;
         }
     }
 
     /**
-     * Simple CSV parser that handles quoted fields
+     * Logs all loaded categories and their keywords in a formatted way
      */
-    private String[] parseCsvLine(String line) {
-        List<String> result = new ArrayList<>();
-        StringBuilder currentField = new StringBuilder();
-        boolean inQuotes = false;
+    private void logAllLoadedKeywords() {
+        log.info("=".repeat(80));
+        log.info("LOADED CATEGORIES AND KEYWORDS SUMMARY");
+        log.info("=".repeat(80));
 
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
+        List<TransactionCategory> allCategories = categoryRepository.findAll();
 
-            if (c == '"') {
-                inQuotes = !inQuotes;
-            } else if (c == ',' && !inQuotes) {
-                result.add(currentField.toString());
-                currentField = new StringBuilder();
-            } else {
-                currentField.append(c);
-            }
+        if (allCategories.isEmpty()) {
+            log.warn("No categories found in database");
+            return;
         }
 
-        result.add(currentField.toString());
-        return result.toArray(new String[0]);
+        int totalKeywords = 0;
+
+        for (TransactionCategory category : allCategories) {
+            String keywordsList = category.getKeywords().stream()
+                    .map(CategoryKeyword::getKeyword)
+                    .sorted()
+                    .collect(Collectors.joining(", "));
+
+            totalKeywords += category.getKeywords().size();
+
+            log.info("Category: {} ({})", category.getName(), category.getDisplayName());
+            log.info("  - Requires Positive Amount: {}", category.isRequiresPositiveAmount());
+            log.info("  - Keyword Count: {}", category.getKeywords().size());
+            log.info("  - Keywords: {}", keywordsList.isEmpty() ? "NONE" : keywordsList);
+            log.info("-".repeat(80));
+        }
+
+        log.info("TOTAL: {} categories with {} total keywords", allCategories.size(), totalKeywords);
+        log.info("=".repeat(80));
     }
 
     public void refreshCache() {
         this.cachedCategories = categoryRepository.findAll();
         this.lastCacheUpdate = LocalDateTime.now();
+        log.debug("Cache refreshed with {} categories", cachedCategories.size());
     }
 
     private List<TransactionCategory> getCategories() {
@@ -184,12 +207,14 @@ public class CategoryDataLoaderService {
         return cachedCategories;
     }
 
+    //TODO this need to be used by multiple sources
     public TransactionCategory categorize(String description, BigDecimal amount) {
         if (description == null || description.isEmpty()) {
             return getCategoryByName("OTHER");
         }
 
         String lowerDesc = description.toLowerCase();
+        log.info(lowerDesc);
 
         for (TransactionCategory category : getCategories()) {
             if (category.getName().equals("OTHER")) {
@@ -204,15 +229,18 @@ public class CategoryDataLoaderService {
                 // If category requires positive amount, verify it
                 if (category.isRequiresPositiveAmount()) {
                     if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                        log.debug("Matched category {} for description: {}", category.getName(), description);
                         return category;
                     }
                 } else {
+                    log.debug("Matched category {} for description: {}", category.getName(), description);
                     return category;
                 }
             }
         }
 
         // Fallback to "Other"
+        log.debug("No category match found, using OTHER for description: {}", description);
         return getCategoryByName("OTHER");
     }
 
@@ -221,4 +249,23 @@ public class CategoryDataLoaderService {
                 .filter(cat -> cat.getName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Category not found: " + name));
-    }}
+    }
+
+    /**
+     * DTO for mapping CSV rows to objects
+     */
+    @Data
+    public static class CategoryCsvRow {
+        @com.fasterxml.jackson.annotation.JsonProperty("name")
+        private String categoryName;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("display_name")
+        private String displayName;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("requires_positive_amount")
+        private boolean requiresPositiveAmount;
+
+        @com.fasterxml.jackson.annotation.JsonProperty("keywords")
+        private String keywords;
+    }
+}

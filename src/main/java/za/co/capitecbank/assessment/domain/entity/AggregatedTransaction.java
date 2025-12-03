@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-@Table(name = "transaction", schema = "data_aggregation")
-public class Transaction {
+@Table(name = "aggregated_transaction", schema = "data_aggregation")
+public class AggregatedTransaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +28,14 @@ public class Transaction {
 
     private String description;
 
-    @Transient  // field won't be persisted to database
+    @Column
     private String category;
 
     private String source;
 
-    public Transaction() {}
+    public AggregatedTransaction() {}
 
-    public Transaction(String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
+    public AggregatedTransaction(String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
         this.customerId = customerId;
         this.amount = amount;
         this.timestamp = timestamp;

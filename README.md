@@ -22,12 +22,12 @@ Run the container:
 12
 docker run -p 8080:8080 --name txn-aggregator txn-aggregator:0.0.1
 Endpoints
-GET /api/transactions/{customerId} — all transactions (categorized).
-GET /api/transactions/{customerId}/categories — totals grouped by category.
-GET /api/transactions/{customerId}/range?start=2025-01-01&end=2025-12-31 —
-transactions in provided date range.
+GET /api/aggregatedTransactions/{customerId} — all aggregatedTransactions (categorized).
+GET /api/aggregatedTransactions/{customerId}/categories — totals grouped by category.
+GET /api/aggregatedTransactions/{customerId}/range?start=2025-01-01&end=2025-12-31 —
+aggregatedTransactions in provided date range.
 Example:
-curl http://localhost:8080/api/transactions/CUST-1
-curl http://localhost:8080/api/transactions/CUST-1/categories
-curl "http://localhost:8080/api/transactions/CUST-1/range?
+curl http://localhost:8080/api/aggregatedTransactions/CUST-1
+curl http://localhost:8080/api/aggregatedTransactions/CUST-1/categories
+curl "http://localhost:8080/api/aggregatedTransactions/CUST-1/range?
 start=2025-01-01&end=2025-12-31"
