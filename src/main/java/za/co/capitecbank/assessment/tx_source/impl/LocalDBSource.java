@@ -14,7 +14,7 @@ public class LocalDBSource  implements TransactionSource {
     @Autowired
     RawTransactionRepository transactionRepository;
     @Override
-    public List<RawTransaction> fetchTransactions(String customerId) {
+    public List<RawTransaction> fetchTransactions() {
         return new ArrayList<>(transactionRepository.findAll());
     }
 }

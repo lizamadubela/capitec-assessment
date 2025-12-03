@@ -28,8 +28,8 @@ public class JsonServerSource implements TransactionSource {
     }
 
     @Override
-    public List<RawTransaction> fetchTransactions(String customerId) {
-        String url = baseUrl + "/transactions?customerId=" + customerId;
+    public List<RawTransaction> fetchTransactions() {
+        String url = baseUrl + "/transactions";
 
         ResponseEntity<List<Map<String, Object>>> resp = restTemplate.exchange(
                 url,

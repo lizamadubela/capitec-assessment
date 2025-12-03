@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.service;
+package za.co.capitecbank.assessment.service.loader;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -14,6 +14,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
 import za.co.capitecbank.assessment.repository.RawTransactionRepository;
+import za.co.capitecbank.assessment.service.TxCategorizationEngine;
 
 import java.io.InputStream;
 import java.math.BigDecimal;

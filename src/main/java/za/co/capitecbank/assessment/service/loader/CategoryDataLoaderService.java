@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.service;
+package za.co.capitecbank.assessment.service.loader;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
