@@ -18,7 +18,7 @@ public class CategoryKeyword {
     private String keyword;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)  // ✅ Changed from "id" to "category_id"
+    @JoinColumn(name = "category_id", nullable = false)
     private TransactionCategory category;
 
     public CategoryKeyword() {}
