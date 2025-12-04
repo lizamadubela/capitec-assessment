@@ -13,28 +13,6 @@
         </sql>
     </changeSet>
 
-    <!-- Reaw Transaction table -->
-    <changeSet id="0-0" author="Liza Madubela">
-        <createTable tableName="raw_transactions" schemaName="data_aggregation">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="customer_id" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="amount" type="DECIMAL(15,2)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="timestamp" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="source" type="VARCHAR(100)"/>
-        </createTable>
-    </changeSet>
-
     <!-- Aggregated Transaction stagging table -->
     <changeSet id="0-1" author="Liza Madubela">
         <createTable tableName="aggregated_transactions" schemaName="data_aggregation">

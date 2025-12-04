@@ -2,18 +2,15 @@ package za.co.capitecbank.assessment.service.impl;
 
 import org.springframework.stereotype.Service;
 import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
-import za.co.capitecbank.assessment.domain.entity.RawTransaction;
-import za.co.capitecbank.assessment.repository.RawTransactionRepository;
 import za.co.capitecbank.assessment.repository.AggregatedTransactionRepository;
 import za.co.capitecbank.assessment.service.AggregationService;
-import za.co.capitecbank.assessment.service.TxCategorizationEngine;
-import za.co.capitecbank.assessment.tx_source.TransactionSource;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class AggregationServiceImpl implements AggregationService {
