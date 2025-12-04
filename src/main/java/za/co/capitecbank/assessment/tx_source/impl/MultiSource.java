@@ -16,13 +16,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class FNB implements TransactionSource {
+public class MultiSource implements TransactionSource {
 
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
-    public FNB(RestTemplate restTemplate,
-               @Value("${app.json-server.base-url}") String baseUrl) {
+    public MultiSource(RestTemplate restTemplate,
+                       @Value("${app.json-server.base-url}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

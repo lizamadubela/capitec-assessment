@@ -1,5 +1,11 @@
 customerId,description,amount,timestamp,source
-CUST-1,Grocery Store - SPAR,120.55,2025-11-20T10:15:30,local file
-CUST-1,uber BV - Ride,47.30,2025-11-21T19:05:00, local file
-CUST-1,Salary,3500.00,2025-11-01T00:00:00, local file
-CUST-2,Starbucks Coffee,5.80,2025-11-27T08:12:00,local file
+CUST-1,Grocery Store - SPAR,120.55,2025-11-20T10:15:30,Capitec
+CUST-1,uber BV - Ride,47.30,2025-11-21T19:05:00, Capitec
+CUST-1,Salary,3500.00,2025-11-01T00:00:00, Capitec
+CUST-2,Starbucks Coffee,5.80,2025-11-27T08:12:00,FNB
+CUST-3,Makro,340.00,2025-11-01T00:00:00, FNB
+CUST-3,Starbucks Coffee,56.80,2025-11-21T08:12:00,FNB
+CUST-4,Makro,340.00,2025-11-01T00:00:00, FNB
+CUST-3,Caltex Coffee,56.80,2025-11-21T08:12:00,Absa
+CUST-4,Nandos,340.00,2025-11-01T00:00:00, FNB
+CUST-3,Vodacom,56.80,2025-11-21T08:12:00,Nedbank

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class Capitec implements TransactionSource {
+public class Bank implements TransactionSource {
     @Autowired
     RawTransactionRepository transactionRepository;
     @Override
