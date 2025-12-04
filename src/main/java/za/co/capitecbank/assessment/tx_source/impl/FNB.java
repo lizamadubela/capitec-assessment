@@ -16,13 +16,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class JsonServerSource implements TransactionSource {
+public class FNB implements TransactionSource {
 
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
-    public JsonServerSource(RestTemplate restTemplate,
-                              @Value("${app.json-server.base-url}") String baseUrl) {
+    public FNB(RestTemplate restTemplate,
+               @Value("${app.json-server.base-url}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }
