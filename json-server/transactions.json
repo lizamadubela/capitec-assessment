@@ -5,7 +5,7 @@
     "description": "Coffee Shop Purchase",
     "amount": 48.00,
     "timestamp": "2025-12-06T10:15:20",
-    "source": "SnapScan"
+    "source": "Scan To Pay"
   },
   {
     "transactionId": "tx-56",
@@ -21,7 +21,7 @@
     "description": "Online Purchase",
     "amount": 1299.00,
     "timestamp": "2025-12-06T15:22:00",
-    "source": "Ozow"
+    "source": "Scan To Pay"
   },
   {
     "transactionId": "tx-58",
@@ -37,7 +37,7 @@
     "description": "Online Store Checkout",
     "amount": 455.90,
     "timestamp": "2025-12-06T19:18:45",
-    "source": "Peach Payments"
+    "source": "PayFast Payments"
   },
   {
     "transactionId": "tx-60",
@@ -69,7 +69,7 @@
     "description": "Electricity Purchase",
     "amount": 200.00,
     "timestamp": "2025-12-07T16:02:10",
-    "source": "Walletdoc"
+    "source": "SnapScan"
   },
   {
     "transactionId": "tx-64",
