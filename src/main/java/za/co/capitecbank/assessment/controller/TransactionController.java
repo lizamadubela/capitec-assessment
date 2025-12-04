@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import za.co.capitecbank.assessment.domain.Transaction;
 import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
 import za.co.capitecbank.assessment.service.AggregationService;
 

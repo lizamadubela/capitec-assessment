@@ -35,7 +35,8 @@ public class AggregatedTransaction {
 
     public AggregatedTransaction() {}
 
-    public AggregatedTransaction(String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
+    public AggregatedTransaction(Long id,String customerId, BigDecimal amount, LocalDateTime timestamp, String description, String category, String source) {
+        this.id = id;
         this.customerId = customerId;
         this.amount = amount;
         this.timestamp = timestamp;

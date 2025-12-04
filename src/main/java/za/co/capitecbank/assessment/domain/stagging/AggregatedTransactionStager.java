@@ -31,9 +31,9 @@ public class AggregatedTransactionStager {
             List<AggregatedTransaction> entities = rawTransactions.stream()
                     .map(rawTransaction -> engine.categorize(rawTransaction,
                             transactionSource.getClass().getSimpleName()))
-                    .map(t -> new AggregatedTransaction(t.getCustomerId(),
-                            t.getAmount(), t.getTimestamp(), t.getDescription(), t.getCategory(),
-                            t.getSource()))
+                    .map(aggregatedTransaction -> new AggregatedTransaction(aggregatedTransaction.getId(),aggregatedTransaction.getCustomerId(),
+                            aggregatedTransaction.getAmount(), aggregatedTransaction.getTimestamp(), aggregatedTransaction.getDescription(), aggregatedTransaction.getCategory(),
+                            aggregatedTransaction.getSource()))
                     .collect(Collectors.toList());
             aggregatedTransactionRepository.saveAll(entities);
         });

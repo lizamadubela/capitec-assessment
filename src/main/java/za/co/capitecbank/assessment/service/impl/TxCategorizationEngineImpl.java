@@ -1,8 +1,8 @@
 package za.co.capitecbank.assessment.service.impl;
 
 import org.springframework.stereotype.Service;
+import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
-import za.co.capitecbank.assessment.domain.Transaction;
 import za.co.capitecbank.assessment.domain.entity.TransactionCategory;
 import za.co.capitecbank.assessment.service.loader.CategoryDataLoaderService;
 import za.co.capitecbank.assessment.service.TxCategorizationEngine;
@@ -18,14 +18,14 @@ public class TxCategorizationEngineImpl implements TxCategorizationEngine {
         this.categoryService = categoryService;
     }
 
-    public Transaction categorize(RawTransaction raw, String source) {
+    public AggregatedTransaction categorize(RawTransaction raw, String source) {
         TransactionCategory category = categoryService.categorize(
                 raw.getDescription(),
                 raw.getAmount()
         );
 
-        return new Transaction(
-                UUID.randomUUID().toString(),
+        return new AggregatedTransaction(
+                raw.getId(),
                 raw.getCustomerId(),
                 raw.getAmount(),
                 raw.getTimestamp(),
