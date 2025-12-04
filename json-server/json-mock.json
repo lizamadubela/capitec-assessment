@@ -1,37 +1,162 @@
-{
-  "transactions": [
-    {
-      "transactionId": "tx-1",
-      "customerId": "CUST-2",
-      "description": "Shoprite",
-      "amount": 125.56,
-      "timestamp": "2025-11-20T10:15:30",
-      "source": "json-server"
-    },
-    {
-      "transactionId": "tx-2",
-      "customerId": "CUST-2",
-      "description": "Bolt - Ride",
-      "amount": 470.15,
-      "timestamp": "2025-11-21T19:05:00",
-      "source": "json-server"
-    },
-    {
-      "transactionId": "tx-3",
-      "customerId": "CUST-3",
-      "description": "Takealot",
-      "amount": 3445.00,
-      "timestamp": "2025-11-27T08:12:00",
-      "source": "json-server"
-    },
-    {
-      "transactionId": "tx-4",
-      "customerId": "CUST-1",
-      "description": "KFC purchase",
-      "amount": 3445.00,
-      "timestamp": "2025-11-27T08:12:00",
-      "source": "json-server"
-    }
-
-  ]
-}
+[
+  {
+    "transactionId": "tx-55",
+    "customerId": "CUST-2",
+    "description": "Coffee Shop Purchase",
+    "amount": 48.00,
+    "timestamp": "2025-12-06T10:15:20",
+    "source": "SnapScan"
+  },
+  {
+    "transactionId": "tx-56",
+    "customerId": "CUST-3",
+    "description": "Restaurant Payment",
+    "amount": 310.50,
+    "timestamp": "2025-12-06T12:44:10",
+    "source": "Zapper"
+  },
+  {
+    "transactionId": "tx-57",
+    "customerId": "CUST-4",
+    "description": "Online Purchase",
+    "amount": 1299.00,
+    "timestamp": "2025-12-06T15:22:00",
+    "source": "Ozow"
+  },
+  {
+    "transactionId": "tx-58",
+    "customerId": "CUST-1",
+    "description": "Subscription Payment",
+    "amount": 99.00,
+    "timestamp": "2025-12-06T17:05:14",
+    "source": "PayFast"
+  },
+  {
+    "transactionId": "tx-59",
+    "customerId": "CUST-5",
+    "description": "Online Store Checkout",
+    "amount": 455.90,
+    "timestamp": "2025-12-06T19:18:45",
+    "source": "Peach Payments"
+  },
+  {
+    "transactionId": "tx-60",
+    "customerId": "CUST-3",
+    "description": "Clothing Purchase",
+    "amount": 749.00,
+    "timestamp": "2025-12-07T08:40:30",
+    "source": "Yoco"
+  },
+  {
+    "transactionId": "tx-61",
+    "customerId": "CUST-2",
+    "description": "Salon Payment",
+    "amount": 260.00,
+    "timestamp": "2025-12-07T10:55:00",
+    "source": "iKhokha"
+  },
+  {
+    "transactionId": "tx-62",
+    "customerId": "CUST-4",
+    "description": "Retail Payment",
+    "amount": 155.50,
+    "timestamp": "2025-12-07T13:12:32",
+    "source": "Masterpass"
+  },
+  {
+    "transactionId": "tx-63",
+    "customerId": "CUST-1",
+    "description": "Electricity Purchase",
+    "amount": 200.00,
+    "timestamp": "2025-12-07T16:02:10",
+    "source": "Walletdoc"
+  },
+  {
+    "transactionId": "tx-64",
+    "customerId": "CUST-5",
+    "description": "Money Transfer",
+    "amount": 500.00,
+    "timestamp": "2025-12-07T18:45:29",
+    "source": "FNB eWallet"
+  },
+  {
+    "transactionId": "tx-65",
+    "customerId": "CUST-3",
+    "description": "Cash Pickup Fee",
+    "amount": 25.00,
+    "timestamp": "2025-12-08T08:10:05",
+    "source": "Standard Bank Instant Money"
+  },
+  {
+    "transactionId": "tx-66",
+    "customerId": "CUST-4",
+    "description": "Money Send",
+    "amount": 300.00,
+    "timestamp": "2025-12-08T10:33:44",
+    "source": "Absa CashSend"
+  },
+  {
+    "transactionId": "tx-67",
+    "customerId": "CUST-1",
+    "description": "Fund Transfer",
+    "amount": 180.00,
+    "timestamp": "2025-12-08T11:58:21",
+    "source": "Nedbank Send-iMali"
+  },
+  {
+    "transactionId": "tx-68",
+    "customerId": "CUST-2",
+    "description": "Payment Request",
+    "amount": 95.00,
+    "timestamp": "2025-12-08T13:15:17",
+    "source": "Capitec Pay Me"
+  },
+  {
+    "transactionId": "tx-69",
+    "customerId": "CUST-5",
+    "description": "Groceries",
+    "amount": 320.55,
+    "timestamp": "2025-12-08T15:43:00",
+    "source": "Shoprite Money Market"
+  },
+  {
+    "transactionId": "tx-70",
+    "customerId": "CUST-3",
+    "description": "Household Items",
+    "amount": 210.00,
+    "timestamp": "2025-12-08T17:18:28",
+    "source": "Checkers Money Market"
+  },
+  {
+    "transactionId": "tx-71",
+    "customerId": "CUST-4",
+    "description": "Cash Transfer",
+    "amount": 150.00,
+    "timestamp": "2025-12-08T19:40:19",
+    "source": "PEP Money Transfer"
+  },
+  {
+    "transactionId": "tx-72",
+    "customerId": "CUST-1",
+    "description": "Retail Services",
+    "amount": 89.99,
+    "timestamp": "2025-12-09T08:05:44",
+    "source": "Boxer Money Services"
+  },
+  {
+    "transactionId": "tx-73",
+    "customerId": "CUST-2",
+    "description": "Fare Payment",
+    "amount": 34.00,
+    "timestamp": "2025-12-09T09:33:12",
+    "source": "Gautrain"
+  },
+  {
+    "transactionId": "tx-74",
+    "customerId": "CUST-5",
+    "description": "Bus Fare",
+    "amount": 17.00,
+    "timestamp": "2025-12-09T11:14:33",
+    "source": "MyCiTi Bus Card"
+  }
+]
