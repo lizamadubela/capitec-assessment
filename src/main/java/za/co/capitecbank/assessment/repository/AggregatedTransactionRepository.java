@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Repository
-public interface TransactionRepository extends JpaRepository<AggregatedTransaction, Long> {
+public interface AggregatedTransactionRepository extends JpaRepository<AggregatedTransaction, Long> {
     List<AggregatedTransaction> findByCustomerIdOrderByTimestampDesc(String accountId);
     List<AggregatedTransaction> findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import za.co.capitecbank.assessment.domain.Transaction;
+import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
 import za.co.capitecbank.assessment.service.AggregationService;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public class TransactionController {
         this.aggregationService = aggregationService;
     }
     @GetMapping("/{customerId}")
-    public List<Transaction> getAll(@PathVariable String customerId) {
+    public List<AggregatedTransaction> getAll(@PathVariable String customerId) {
         return aggregationService.getAllTransactions(customerId);
     }
     @GetMapping("/{customerId}/categories")
@@ -31,7 +32,7 @@ public class TransactionController {
         return aggregationService.getTotalsByCategory(customerId);
     }
     @GetMapping("/{customerId}/range")
-    public List<Transaction> getByRange(
+    public List<AggregatedTransaction> getByRange(
             @PathVariable String customerId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate start,

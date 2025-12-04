@@ -31,7 +31,7 @@ public class TxCategorizationEngineImpl implements TxCategorizationEngine {
                 raw.getTimestamp(),
                 raw.getDescription(),
                 category.getDisplayName(),
-                source
+                raw.getSource()
         );
     }
 }

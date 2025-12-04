@@ -6,17 +6,24 @@ spring:
     console:
       enabled: true
 
-  datasource:
-    url: jdbc:mysql://localhost:3308/data_aggregation?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # driver-class-name: com.mysql.cj.jdbc.Driver   # optional; Spring Boot infers it
+#  datasource:
+#    url: jdbc:mysql://localhost:3308/data_aggregation?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: none   # Liquibase handles schema
+  datasource:
+    url: jdbc:postgresql://cards-nprdb.cluster-cj6y844iyhbc.af-south-1.rds.amazonaws.com:5432/bb_dev
+    username: S_DCPS_BB_CARDS_DEV
+    password: g9M9vEk!giJQBx
+    hikari:
+      registerMbeans: true
+      maximumPoolSize: 2
+
+#  jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    hibernate:
+#      ddl-auto: none   # Liquibase handles schema
 
   liquibase:
     enabled: true
@@ -29,6 +36,7 @@ main:
   allow-bean-definition-overriding: true
 
 app:
-  data-file: classpath:transactions.csv
+  xml-data-file: classpath:raw-transactions.xml
+  category-data: classpath:categories.csv
   json-server:
     base-url: http://localhost:3000

@@ -158,5 +158,14 @@
     "amount": 17.00,
     "timestamp": "2025-12-09T11:14:33",
     "source": "MyCiTi Bus Card"
+  },
+  {
+    "transactionId": "tx-75",
+    "customerId": "CUST-5",
+    "description": "Voucher - C23435555",
+    "amount": 17.00,
+    "timestamp": "2025-12-09T11:14:33",
+    "source": "Cash Send"
   }
+
 ]

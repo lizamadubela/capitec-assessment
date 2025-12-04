@@ -7,6 +7,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Order
 public class CategoryDataLoaderService {
 
     private final TransactionCategoryRepository categoryRepository;
@@ -34,7 +36,7 @@ public class CategoryDataLoaderService {
     private LocalDateTime lastCacheUpdate;
     private static final Duration CACHE_DURATION = Duration.ofMinutes(30);
 
-    @Value("${category.csv.path:classpath:categories.csv}")
+    @Value("${app.category-data}")
     private String categoriesFile;
 
     public CategoryDataLoaderService(TransactionCategoryRepository categoryRepository,
