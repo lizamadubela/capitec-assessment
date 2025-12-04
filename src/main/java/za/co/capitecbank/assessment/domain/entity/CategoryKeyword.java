@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "category_keyword", schema = "data_aggregation")
+@Table(name = "category_keywords", schema = "data_aggregation")
 public class CategoryKeyword {
 
     @Id

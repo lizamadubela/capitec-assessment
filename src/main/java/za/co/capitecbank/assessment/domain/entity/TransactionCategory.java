@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "transaction_category", schema = "data_aggregation")
+@Table(name = "transaction_categories", schema = "data_aggregation")
 public class TransactionCategory {
 
     @Id

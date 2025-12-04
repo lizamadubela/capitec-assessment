@@ -37,7 +37,7 @@ public class AggregationServiceImpl implements AggregationService {
     public List<za.co.capitecbank.assessment.domain.Transaction> getAllTransactions(String customerId) {
 // fetch and save
         sources.forEach(transactionSource -> {
-            List<RawTransaction> rawTransactions = transactionSource.fetchTransactions(customerId);
+            List<RawTransaction> rawTransactions = transactionSource.fetchTransactions();
             List<AggregatedTransaction> entities = rawTransactions.stream()
                     .map(r -> engine.categorize(r,
                             transactionSource.getClass().getSimpleName()))

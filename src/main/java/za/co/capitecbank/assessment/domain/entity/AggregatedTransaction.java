@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
-@Table(name = "aggregated_transaction", schema = "data_aggregation")
+@Table(name = "aggregated_transactions", schema = "data_aggregation")
 public class AggregatedTransaction {
 
     @Id
