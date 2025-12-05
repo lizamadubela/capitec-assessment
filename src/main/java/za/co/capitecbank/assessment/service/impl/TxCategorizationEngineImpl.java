@@ -7,7 +7,6 @@ import za.co.capitecbank.assessment.domain.entity.TransactionCategory;
 import za.co.capitecbank.assessment.service.loader.CategoryDataLoaderService;
 import za.co.capitecbank.assessment.service.TxCategorizationEngine;
 
-import java.util.UUID;
 
 @Service
 public class TxCategorizationEngineImpl implements TxCategorizationEngine {
