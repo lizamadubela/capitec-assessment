@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.tx_source.impl;
+package za.co.capitecbank.assessment.transactions.source.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
-import za.co.capitecbank.assessment.tx_source.TransactionSource;
+import za.co.capitecbank.assessment.transactions.source.TransactionSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,13 +19,13 @@ import java.util.Map;
 
 
 @Component
-public class MultiSource implements TransactionSource {
+public class JsonMockServerTransactionsSource implements TransactionSource {
 
     private final RestTemplate restTemplate;
     private final String baseUrl;
 
-    public MultiSource(RestTemplate restTemplate,
-                       @Value("${app.json-server.base-url}") String baseUrl) {
+    public JsonMockServerTransactionsSource(RestTemplate restTemplate,
+                                            @Value("${app.json-server.base-url}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }
@@ -106,7 +106,6 @@ public class MultiSource implements TransactionSource {
                 }
             }
         }
-
         return new RawTransaction(customerId, description, amount, timestamp, source);
     }
 }

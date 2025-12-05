@@ -1,0 +1,23 @@
+ATM
+CDM
+POS
+Internet banking
+Mobile app
+Mobile banking
+USSD
+EFT
+Payshap
+Debit order
+Stop order
+Direct deposit
+Branch
+Teller
+Snapscan
+Zapper
+Contactless
+Apple pay
+Google pay
+Samsung pay
+Masterpass
+Cheque deposit
+Cash deposit

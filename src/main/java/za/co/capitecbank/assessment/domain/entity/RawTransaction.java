@@ -1,6 +1,7 @@
 package za.co.capitecbank.assessment.domain.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,81 +1,168 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <transactions>
+
     <transaction>
+        <transactionId>TXN-10001</transactionId>
         <customerId>CUST-1</customerId>
         <description>Grocery Store - SPAR</description>
+        <merchant>SPAR</merchant>
+        <reference>POS123456</reference>
+        <type>DEBIT</type>
         <amount>120.55</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-20T10:15:30</timestamp>
-        <source>Capitec</source>
+        <channel>POS</channel>
+        <balanceAfter>2380.45</balanceAfter>
+        <bank>Capitec</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10002</transactionId>
         <customerId>CUST-1</customerId>
         <description>uber BV - Ride</description>
+        <merchant>Uber</merchant>
+        <reference>UBR293883</reference>
+        <type>DEBIT</type>
         <amount>47.30</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-21T19:05:00</timestamp>
-        <source>Capitec</source>
+        <channel>APP</channel>
+        <balanceAfter>2333.15</balanceAfter>
+        <bank>Capitec</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10003</transactionId>
         <customerId>CUST-1</customerId>
         <description>Salary</description>
+        <merchant>Employer Pty Ltd</merchant>
+        <reference>SAL20251101</reference>
+        <type>CREDIT</type>
         <amount>3500.00</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-01T00:00:00</timestamp>
-        <source>Capitec</source>
+        <channel>EFT</channel>
+        <balanceAfter>5820.00</balanceAfter>
+        <bank>Capitec</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10004</transactionId>
         <customerId>CUST-2</customerId>
         <description>Starbucks Coffee</description>
+        <merchant>Starbucks</merchant>
+        <reference>POS998811</reference>
+        <type>DEBIT</type>
         <amount>5.80</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-27T08:12:00</timestamp>
-        <source>FNB</source>
+        <channel>POS</channel>
+        <balanceAfter>1250.90</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10005</transactionId>
         <customerId>CUST-4</customerId>
         <description>VAF - Ref9338882222</description>
+        <merchant>FNB Vehicle Finance</merchant>
+        <reference>REF9338882222</reference>
+        <type>DEBIT</type>
         <amount>2325.00</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-27T08:12:00</timestamp>
-        <source>FNB</source>
+        <channel>DEBIT ORDER</channel>
+        <balanceAfter>4120.00</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10006</transactionId>
         <customerId>CUST-3</customerId>
         <description>Makro</description>
+        <merchant>Makro</merchant>
+        <reference>POS883773</reference>
+        <type>DEBIT</type>
         <amount>340.00</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-01T00:00:00</timestamp>
-        <source>FNB</source>
+        <channel>POS</channel>
+        <balanceAfter>2200.00</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10007</transactionId>
         <customerId>CUST-3</customerId>
         <description>Starbucks Coffee</description>
+        <merchant>Starbucks</merchant>
+        <reference>POS882100</reference>
+        <type>DEBIT</type>
         <amount>56.80</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-21T08:12:00</timestamp>
-        <source>FNB</source>
+        <channel>POS</channel>
+        <balanceAfter>2143.20</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10008</transactionId>
         <customerId>CUST-4</customerId>
         <description>Makro</description>
+        <merchant>Makro</merchant>
+        <reference>POS829191</reference>
+        <type>DEBIT</type>
         <amount>340.00</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-01T00:00:00</timestamp>
-        <source>FNB</source>
+        <channel>POS</channel>
+        <balanceAfter>3150.00</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10009</transactionId>
         <customerId>CUST-3</customerId>
         <description>Caltex Coffee</description>
+        <merchant>Caltex</merchant>
+        <reference>POS929192</reference>
+        <type>DEBIT</type>
         <amount>56.80</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-21T08:12:00</timestamp>
-        <source>Absa</source>
+        <channel>POS</channel>
+        <balanceAfter>2086.40</balanceAfter>
+        <bank>Absa</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10010</transactionId>
         <customerId>CUST-4</customerId>
         <description>Nandos</description>
+        <merchant>Nandos</merchant>
+        <reference>POS551211</reference>
+        <type>DEBIT</type>
         <amount>340.00</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-01T00:00:00</timestamp>
-        <source>FNB</source>
+        <channel>POS</channel>
+        <balanceAfter>2810.00</balanceAfter>
+        <bank>FNB</bank>
     </transaction>
+
     <transaction>
+        <transactionId>TXN-10011</transactionId>
         <customerId>CUST-3</customerId>
         <description>Vodacom</description>
+        <merchant>Vodacom</merchant>
+        <reference>VODA99881</reference>
+        <type>DEBIT</type>
         <amount>56.80</amount>
+        <currency>ZAR</currency>
         <timestamp>2025-11-21T08:12:00</timestamp>
-        <source>Nedbank</source>
+        <channel>DEBIT ORDER</channel>
+        <balanceAfter>2029.60</balanceAfter>
+        <bank>Nedbank</bank>
     </transaction>
 </transactions>

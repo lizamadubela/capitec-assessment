@@ -31,3 +31,21 @@ curl http://localhost:8080/api/aggregatedTransactions/CUST-1
 curl http://localhost:8080/api/aggregatedTransactions/CUST-1/categories
 curl "http://localhost:8080/api/aggregatedTransactions/CUST-1/range?
 start=2025-01-01&end=2025-12-31"
+
+
+Flat file fixed length fileds
+
+| Field         | Length |
+| ------------- | ------ |
+| transactionId | 12     |
+| customerId    | 10     |
+| description   | 30     |
+| merchant      | 20     |
+| reference     | 15     |
+| type          | 6      |
+| amount        | 10     |
+| currency      | 3      |
+| timestamp     | 19     |
+| channel       | 10     |
+| source        | 10     |
+| filler        | 5      |

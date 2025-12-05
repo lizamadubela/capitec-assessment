@@ -72,6 +72,10 @@ maven.apache.org/xsd/maven-4.0.0.xsd">
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformats-text</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

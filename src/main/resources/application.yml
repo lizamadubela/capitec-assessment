@@ -2,9 +2,10 @@ server:
   port: 8081
 
 spring:
-  h2:
-    console:
-      enabled: true
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      write-dates-as-timestamps: false
 
 #  datasource:
 #    url: jdbc:mysql://localhost:3308/data_aggregation?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
@@ -38,5 +39,6 @@ main:
 app:
   xml-data-file: classpath:raw-transactions.xml
   category-data: classpath:categories.csv
+  flat-file: classpath:raw-fixed-length.txt
   json-server:
     base-url: http://localhost:3000
