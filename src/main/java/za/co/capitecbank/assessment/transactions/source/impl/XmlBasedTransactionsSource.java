@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.tx_source.impl;
+package za.co.capitecbank.assessment.transactions.source.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -7,7 +7,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
-import za.co.capitecbank.assessment.tx_source.TransactionSource;
+import za.co.capitecbank.assessment.transactions.source.TransactionSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class Bank implements TransactionSource {
+public class XmlBasedTransactionsSource implements TransactionSource {
 
     private final Resource xmlFile;
 
-    public Bank(@Value("${app.xml-data-file}") Resource xmlFile) {
+    public XmlBasedTransactionsSource(@Value("${app.xml-data-file}") Resource xmlFile) {
         this.xmlFile = xmlFile;
     }
 
@@ -72,7 +72,7 @@ public class Bank implements TransactionSource {
         try {
             String customerId = getElementText(element, "customerId", "");
             String description = getElementText(element, "description", "");
-            String source = getElementText(element, "source", "XML_SOURCE");
+            String source = getElementText(element, "channel", "XML_SOURCE");
 
             // Parse amount
             BigDecimal amount = BigDecimal.ZERO;

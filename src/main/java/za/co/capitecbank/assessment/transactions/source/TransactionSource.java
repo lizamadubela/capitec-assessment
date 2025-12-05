@@ -1,4 +1,4 @@
-package za.co.capitecbank.assessment.tx_source;
+package za.co.capitecbank.assessment.transactions.source;
 
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
 
