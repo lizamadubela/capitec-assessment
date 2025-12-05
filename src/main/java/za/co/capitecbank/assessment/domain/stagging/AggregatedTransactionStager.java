@@ -28,8 +28,7 @@ public class AggregatedTransactionStager {
         sources.forEach(transactionSource -> {
             List<RawTransaction> rawTransactions = transactionSource.fetchTransactions();
             List<AggregatedTransaction> entities = rawTransactions.stream()
-                    .map(rawTransaction -> engine.categorize(rawTransaction,
-                            transactionSource.getClass().getSimpleName()))
+                    .map(rawTransaction -> engine.categorize(rawTransaction))
                     .map(aggregatedTransaction -> new AggregatedTransaction(aggregatedTransaction.getId(),aggregatedTransaction.getCustomerId(),
                             aggregatedTransaction.getAmount(), aggregatedTransaction.getTimestamp(), aggregatedTransaction.getDescription(), aggregatedTransaction.getCategory(),
                             aggregatedTransaction.getSource()))

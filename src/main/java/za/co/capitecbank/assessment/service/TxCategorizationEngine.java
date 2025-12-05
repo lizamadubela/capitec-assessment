@@ -4,5 +4,5 @@ import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
 import za.co.capitecbank.assessment.domain.entity.RawTransaction;
 
 public interface TxCategorizationEngine {
-    AggregatedTransaction categorize(RawTransaction raw, String source);
+    AggregatedTransaction categorize(RawTransaction rawTransaction);
 }

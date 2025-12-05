@@ -18,20 +18,20 @@ public class TxCategorizationEngineImpl implements TxCategorizationEngine {
         this.categoryService = categoryService;
     }
 
-    public AggregatedTransaction categorize(RawTransaction raw, String source) {
+    public AggregatedTransaction categorize(RawTransaction rawTransaction) {
         TransactionCategory category = categoryService.categorize(
-                raw.getDescription(),
-                raw.getAmount()
+                rawTransaction.getDescription(),
+                rawTransaction.getAmount()
         );
 
         return new AggregatedTransaction(
-                raw.getId(),
-                raw.getCustomerId(),
-                raw.getAmount(),
-                raw.getTimestamp(),
-                raw.getDescription(),
+                rawTransaction.getId(),
+                rawTransaction.getCustomerId(),
+                rawTransaction.getAmount(),
+                rawTransaction.getTimestamp(),
+                rawTransaction.getDescription(),
                 category.getDisplayName(),
-                raw.getSource()
+                rawTransaction.getSource()
         );
     }
 }
