@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import za.co.capitecbank.assessment.controller.TransactionController;
+import za.co.capitecbank.assessment.controller.AggregatedTransactionController;
 import za.co.capitecbank.assessment.domain.Transaction;
 import za.co.capitecbank.assessment.service.AggregationService;
 
@@ -37,13 +37,13 @@ class TransactionControllerTest {
     private AggregationService aggregationService;
 
     @InjectMocks
-    private TransactionController transactionController;
+    private AggregatedTransactionController aggregatedTransactionController;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(transactionController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(aggregatedTransactionController).build();
     }
 
     @Test

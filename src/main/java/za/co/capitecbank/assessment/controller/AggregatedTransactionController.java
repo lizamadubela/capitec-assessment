@@ -16,9 +16,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/transactions")
-public class TransactionController {
+public class AggregatedTransactionController {
     private final AggregationService aggregationService;
-    public TransactionController(AggregationService aggregationService) {
+    public AggregatedTransactionController(AggregationService aggregationService) {
         this.aggregationService = aggregationService;
     }
     @GetMapping("/{customerId}")
@@ -38,5 +38,10 @@ public class TransactionController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate end) {
         return aggregationService.getByDateRange(customerId, start, end);
+    }
+
+    @GetMapping("/{customerId}/{transactionId}")
+    public AggregatedTransaction getTransaction(@PathVariable String customerId, @PathVariable Long transactionId) {
+        return aggregationService.getTransactionById(customerId, transactionId);
     }
 }

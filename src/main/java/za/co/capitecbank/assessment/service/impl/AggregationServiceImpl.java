@@ -2,6 +2,7 @@ package za.co.capitecbank.assessment.service.impl;
 
 import org.springframework.stereotype.Service;
 import za.co.capitecbank.assessment.domain.entity.AggregatedTransaction;
+import za.co.capitecbank.assessment.exception.TransactionNotFoundException;
 import za.co.capitecbank.assessment.repository.AggregatedTransactionRepository;
 import za.co.capitecbank.assessment.service.AggregationService;
 
@@ -57,8 +58,8 @@ public class AggregationServiceImpl implements AggregationService {
     }
 
     @Override
-    public AggregatedTransaction getTransactionById(String transactionId) {
-        return null;
+    public AggregatedTransaction getTransactionById(String customerId,Long transactionId) {
+        return aggregatedTransactionRepository.findByCustomerIdAndId(customerId,transactionId).orElseThrow(() -> new TransactionNotFoundException(transactionId,customerId)); // todo return a specific message when not foud
     }
 
     @Override
