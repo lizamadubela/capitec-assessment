@@ -15,5 +15,5 @@ public interface AggregationService {
     List<AggregatedTransaction> getByDateRange(String customerId, LocalDate start, LocalDate end);
     AggregatedTransaction getTransactionById(String customerId, Long transactionId);
     Map<String, BigDecimal> getTotalsBySource(String customerId);
-    List<AggregatedTransaction> searchTransactions(String search, String customerId);
+//    List<AggregatedTransaction> searchTransactions(String search, String customerId);
 }

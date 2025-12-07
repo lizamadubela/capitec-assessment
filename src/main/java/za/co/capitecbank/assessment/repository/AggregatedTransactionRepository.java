@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface AggregatedTransactionRepository extends JpaRepository<AggregatedTransaction, Long> {
-    List<AggregatedTransaction> findByCustomerIdOrderByTimestampDesc(String accountId);
+    List<AggregatedTransaction> findByCustomerIdOrderByTimestampDesc(String customerId);
     List<AggregatedTransaction> findByCustomerIdAndTimestampBetweenOrderByTimestampDesc(String accountId, LocalDateTime start, LocalDateTime end);
     Optional<AggregatedTransaction> findByCustomerIdAndId(String customerId, Long id);
 }

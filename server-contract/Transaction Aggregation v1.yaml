@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: Capitec Bank Assessment - Transaction Aggregation API
+  description: API for retrieving and aggregating customer transactions
+  version: 1.0.0
+  contact:
+    name: Liza Madubela
+    email: lizamadubela@capitecbank.co.za
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Transactions
+    description: Transaction aggregation and retrieval operations
+
+paths:
+  /api/transactions/{customerId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get all transactions for a customer
+      description: Retrieves all aggregated transactions for a specific customer
+      operationId: getAllTransactions
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregatedTransaction'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/transactions/{customerId}/categories:
+    get:
+      tags:
+        - Transactions
+      summary: Get category totals for a customer
+      description: Retrieves total amounts grouped by transaction category
+      operationId: getCategoryTotals
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                  format: decimal
+                example:
+                  GROCERIES: -2450.50
+                  SALARY: 15000.00
+                  ENTERTAINMENT: -850.75
+                  UTILITIES: -1200.00
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/transactions/{customerId}/range:
+    get:
+      tags:
+        - Transactions
+      summary: Get transactions by date range
+      description: Retrieves transactions for a customer within a specific date range
+      operationId: getTransactionsByDateRange
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+        - name: start
+          in: query
+          required: true
+          description: Start date (inclusive)
+          schema:
+            type: string
+            format: date
+            example: '2025-11-01'
+        - name: end
+          in: query
+          required: true
+          description: End date (inclusive)
+          schema:
+            type: string
+            format: date
+            example: '2025-11-30'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggregatedTransaction'
+        '400':
+          description: Invalid date range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/transactions/{customerId}/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get a specific transaction
+      description: Retrieves a single transaction by customer ID and transaction ID
+      operationId: getTransactionById
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+        - name: transactionId
+          in: path
+          required: true
+          description: Unique transaction identifier
+          schema:
+            type: integer
+            format: int64
+            example: 12345
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregatedTransaction'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    AggregatedTransaction:
+      type: object
+      required:
+        - id
+        - customerId
+        - description
+        - amount
+        - timestamp
+        - source
+        - category
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique transaction identifier
+          example: 12345
+        customerId:
+          type: string
+          description: Customer ID in format CUST-XXXX
+          pattern: '^CUST-\d+$'
+          example: CUST-1234
+        description:
+          type: string
+          description: Transaction description
+          example: Woolworths Sandton
+        amount:
+          type: number
+          format: decimal
+          description: Transaction amount (negative for expenses, positive for income)
+          example: -450.50
+        timestamp:
+          type: string
+          format: date-time
+          description: Transaction timestamp in format yyyy-MM-dd HH:mm:ss
+          example: '2025-11-22 14:30:45'
+        source:
+          type: string
+          description: Transaction source/channel
+          example: POS
+        category:
+          type: string
+          description: Transaction category
+          example: GROCERIES
+
+    Error:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: '2025-11-22T14:30:45'
+        status:
+          type: integer
+          example: 404
+        error:
+          type: string
+          example: Not Found
+        message:
+          type: string
+          example: Customer not found
+        path:
+          type: string
+          example: /api/transactions/CUST-9999

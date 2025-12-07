@@ -110,7 +110,7 @@ public class CategoryDataLoaderService {
             boolean requiresPositiveAmount = row.isRequiresPositiveAmount();
             String keywordsStr = row.getKeywords() != null ? row.getKeywords().trim() : "";
 
-            // Check if category already exists
+            // Check if category already exists to prevent duplicates
             Optional<TransactionCategory> existingCategory = categoryRepository.findByName(categoryName);
             TransactionCategory category;
 
