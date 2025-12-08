@@ -9,11 +9,10 @@ A Spring Boot application that ingests transactions from multiple sources, categ
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
 - [Running the Application](#running-the-application)
+- [MockServer Setup](#mockserver-setup)
 - [API Documentation](#api-documentation)
 - [Project Structure](#project-structure)
 - [Data Sources](#data-sources)
-
----
 
 ## Architecture
 
@@ -85,16 +84,12 @@ A Spring Boot application that ingests transactions from multiple sources, categ
 - Custom exceptions: `InvalidDateRangeException`, `InvalidSearchQueryException`, `CustomerNotFoundException`, `TransactionNotFoundException`
 - `GlobalExceptionHandler` - centralized error handling
 
----
-
 ## Prerequisites
 
 - **JDK 21** or higher
 - **Maven 3.8+**
 - **Docker** and **Docker Compose** (for MySQL and containerized deployment)
 - **Git**
-
----
 
 ## Getting Started
 
@@ -105,181 +100,285 @@ git clone https://github.com/lizamadubela/capitec-assessment.git
 cd transaction-aggregator
 ```
 
-### 2. Environment Variables
+### 2. Project Structure
 
-Create a `.env` file in the project root or set the following environment variables:
-
-```bash
-# Database Configuration
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=data_aggregation
-DB_USERNAME=root
-DB_PASSWORD=root
+Ensure your project has the following structure for Docker setup:
 
 ```
-
-### 3. Start MySQL with Docker
-
-Run MySQL in a Docker container:
-
-```bash
-docker run -d \
-  --name mysql-txn-aggregator \
-  -e MYSQL_ROOT_PASSWORD=rootpassword \
-  -e MYSQL_DATABASE=data_aggregation \
-  -e MYSQL_USER=root \
-  -e MYSQL_PASSWORD=secure_password \
-  -p 3306:3306 \
-  mysql:8.0
+transaction-aggregator/
+├── docker/
+│   ├── mysql/
+│   │   └── init/           # MySQL initialization scripts (optional)
+│   └── mockserver/
+│       └── config/
+│           └── transactions.json    # MockServer expectations
+├── docker-compose.yml
+├── Dockerfile
+├── pom.xml
+└── src/
 ```
-
-Or use Docker Compose (if you have a `docker-compose.yml`):
-
-```bash
-docker-compose up -d mysql
-```
-
----
 
 ## Configuration
 
-### Application Configuration (`application.yml`)
+### Application Configuration
 
-Update `src/main/resources/application.yml`:
+Update `src/main/resources/application.yml` or `application.properties`:
+
+**application.yml:**
 
 ```yaml
-spring:
-  application:
-    name: transaction-aggregator
-  
-  datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:data_aggregation}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:secure_password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
+server:
+  port: 8081
 
-    liquibase:
+spring:
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss"
+    serialization:
+      write-dates-as-timestamps: false
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none   # Liquibase handles schema
+
+  liquibase:
     enabled: true
     default-schema: data_aggregation
-    change-log: classpath:liquibase/liquibase-changeLog.xml
+    change-log: classpath:liquibase/changelog/liquibase-changeLog.xml
     liquibase-schema: data_aggregation
     drop-first: true
 
-server:
-  port: ${SERVER_PORT:8081}
+main:
+  allow-bean-definition-overriding: true
 
-logging:
-  level:
-    root: INFO
-    za.co.capitecbank.assessment: TRACE
+app:
+  xml-data-file: classpath:raw-transactions.xml
+  category-data: classpath:categories.csv
+  flat-file: classpath:raw-fixed-length.txt
+  # Use the mock-server service name so the app reaches it inside the network
+  json-server:
+    base-url: http://mock-server:1080
 ```
 
-### Liquibase Database Migrations
+### Docker Compose Configuration
 
-Liquibase will automatically apply database changes on application startup.
+Create or update `docker-compose.yml`:
 
-**Manual Migration (Optional)**
+```yaml
+version: "3.8"
 
-To apply Liquibase changes manually:
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-data-aggregation
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: data_aggregation
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - txn-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
-```bash
-mvn liquibase:update
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: data-aggregation-app:1.0.7
+    container_name: txn-aggregator
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SERVER_PORT: 8081
+      JAVA_OPTS: >-
+        -Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - txn-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  mock-server:
+    image: mockserver/mockserver:latest
+    container_name: mock-txn-server
+    restart: unless-stopped
+    ports:
+      - "1080:1080"
+    environment:
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/transactions.json
+    volumes:
+      - ./docker/mockserver/config:/config
+    networks:
+      - txn-network
+
+volumes:
+  mysql_data:
+
+networks:
+  txn-network:
+    driver: bridge
 ```
 
-To rollback the last changeset:
+### Dockerfile
 
-```bash
-mvn liquibase:rollback -Dliquibase.rollbackCount=1
+Create `Dockerfile` in the project root:
+
+```dockerfile
+# Use a base image with a Java Runtime Environment (JRE)
+FROM amazoncorretto:21-alpine-jdk
+
+# Setting the working directory inside the container
+WORKDIR /app
+
+# Copy the built JAR file into the container
+COPY target/transaction-aggregator-0.0.1-SNAPSHOT.jar data-aggregation-app.jar
+
+# Expose the port
+EXPOSE 8081
+
+# Command to run the application when the container starts
+ENTRYPOINT ["java", "-jar", "data-aggregation-app.jar"]
+
 ```
-
----
-
 ## Running the Application
 
-### Run Locally (Development Mode)
+### Run with Docker Compose (Recommended)
 
-#### 1. Build the Project
-
-```bash
-mvn clean install
-```
-
-#### 2. Run the Spring Boot Application
-
-```bash
-mvn spring-boot:run
-```
-
-Or run the JAR directly:
-
-```bash
-java -jar target/transaction-aggregator-0.0.1-SNAPSHOT.jar
-```
-
-The application will start on **http://localhost:8081**
-
-#### 3. Run Tests
-
-Run all tests:
-
-```bash
-mvn test
-```
-
-Run specific test class:
-
-```bash
-mvn test -Dtest=AggregatedTransactionControllerTest
-```
-
-### Run with Docker
-
-#### 1. Build Docker Image
-
-```bash
-docker build -t txn-aggregator:0.0.1 .
-```
-
-#### 2. Run Container
-
-```bash
-docker run -d \
-  --name txn-aggregator \
-  -p 8080:8080 \
-  -e DB_HOST=host.docker.internal \
-  -e DB_PORT=3306 \
-  -e DB_NAME=transaction_db \
-  -e DB_USERNAME=txn_user \
-  -e DB_PASSWORD=secure_password \
-  txn-aggregator:0.0.1
-```
-
-#### 3. Using Docker Compose
-
-If you have a `docker-compose.yml`:
+This will start MySQL, the application, and MockServer together:
 
 ```bash
 # Start all services
 docker-compose up -d
 
-# View logs
+# View logs for all services
 docker-compose logs -f
+
+# View logs for specific service
+docker-compose logs -f app
+docker-compose logs -f mysql
+docker-compose logs -f mock-server
+
+# Check service status
+docker-compose ps
 
 # Stop all services
 docker-compose down
+
+# Stop and remove volumes (clean slate)
+docker-compose down -v
 ```
 
----
+### Option 2: Run Locally (Development Mode)
+
+#### 1. Start MySQL
+
+```bash
+docker-compose up -d mysql
+```
+
+#### 2. Start MockServer
+
+```bash
+docker-compose up -d mock-server
+```
+
+#### 3. Build the Project
+
+```bash
+mvn clean install
+```
+
+#### 4. Run the Spring Boot Application
+
+```bash
+# Using Maven
+mvn spring-boot:run
+
+# Or run the JAR directly
+java -jar target/transaction-aggregator-0.0.1-SNAPSHOT.jar
+
+# With custom properties
+java -jar target/transaction-aggregator-0.0.1-SNAPSHOT.jar \
+  --spring.datasource.url=jdbc:mysql://localhost:3306/data_aggregation \
+  --app.json-server.base-url=http://localhost:1080
+```
+
+The application will start on **http://localhost:8081**
+
+### Option 3: Build and Run Docker Image Manually
+
+```bash
+# Build the Docker image
+docker build -t txn-aggregator:1.0.0 .
+
+# Run the container
+docker run -d \
+  --name txn-aggregator \
+  --network txn-network \
+  -p 8081:8081 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/data_aggregation \
+  -e SPRING_DATASOURCE_USERNAME=root \
+  -e SPRING_DATASOURCE_PASSWORD=root \
+  -e MOCK_SERVER_URL=http://mock-txn-server:1080 \
+  txn-aggregator:1.0.0
+
+# View logs
+docker logs -f txn-aggregator
+```
+
+### Verify Services are Running
+
+```bash
+# Check application health
+curl http://localhost:8081/actuator/health
+
+# Expected response:
+# {"status":"UP"}
+
+# Check MySQL
+docker exec -it mysql-data-aggregation mysql -uroot -proot -e "SHOW DATABASES;"
+```
+
+### Troubleshooting
+
+#### Application Won't Start
+
+```bash
+# Check if MySQL is ready
+docker logs mysql-data-aggregation
+
+# Check application logs
+docker logs txn-aggregator
+```
 
 ## API Documentation
 
@@ -322,8 +421,6 @@ http://localhost:8081/api
 curl http://localhost:8081/api/transactions/CUST-1
 ```
 
----
-
 #### 2. Get Transactions by Category
 
 **Endpoint:** `GET /api/transactions/{customerId}/categories`
@@ -353,8 +450,6 @@ curl http://localhost:8081/api/transactions/CUST-1
 curl http://localhost:8081/api/transactions/CUST-1/categories
 ```
 
----
-
 #### 3. Get Transactions by Date Range
 
 **Endpoint:** `GET /api/transactions/{customerId}/range`
@@ -365,8 +460,8 @@ curl http://localhost:8081/api/transactions/CUST-1/categories
 - `customerId` (String, required) - Customer identifier
 
 **Query Parameters:**
-- `start` (String, required) - Start date (format: `YYYY-MM-DD`)
-- `end` (String, required) - End date (format: `YYYY-MM-DD`)
+- `start` (String, required) - Start date (format: YYYY-MM-DD)
+- `end` (String, required) - End date (format: YYYY-MM-DD)
 
 **Response:** `200 OK`
 
@@ -380,15 +475,6 @@ curl http://localhost:8081/api/transactions/CUST-1/categories
     "timestamp": "2025-11-21T19:05:00+02:00",
     "source": "APP",
     "category": "Transport"
-  },
-  {
-    "id": 51,
-    "customerId": "CUST-1",
-    "description": "Grocery Store - SPAR",
-    "amount": 120.55,
-    "timestamp": "2025-11-20T10:15:30+02:00",
-    "source": "POS",
-    "category": "Food"
   }
 ]
 ```
@@ -399,8 +485,6 @@ curl http://localhost:8081/api/transactions/CUST-1/categories
 curl "http://localhost:8081/api/transactions/CUST-1/range?start=2025-01-01&end=2025-12-31"
 ```
 
----
-
 #### 4. Search Transactions
 
 **Endpoint:** `POST /api/transactions/{customerId}/search`
@@ -410,14 +494,12 @@ curl "http://localhost:8081/api/transactions/CUST-1/range?start=2025-01-01&end=2
 **Path Parameters:**
 - `customerId` (String, required) - Customer identifier
 
-**Search Parameters:**
-**Request**
+**Request Body:**
 
 ```json
 {
-    "searchParameter":"uber"
+  "searchParameter": "uber"
 }
-
 ```
 
 **Response:** `200 OK`
@@ -439,16 +521,17 @@ curl "http://localhost:8081/api/transactions/CUST-1/range?start=2025-01-01&end=2
 **Example:**
 
 ```bash
-curl "http://localhost:8081/api/transactions/CUST-1/search"
+curl -X POST http://localhost:8081/api/transactions/CUST-1/search \
+  -H "Content-Type: application/json" \
+  -d '{"searchParameter":"uber"}'
 ```
-
----
 
 ### Error Responses
 
 All endpoints may return the following error responses:
 
 **404 Not Found**
+
 ```json
 {
   "status": 404,
@@ -458,6 +541,7 @@ All endpoints may return the following error responses:
 ```
 
 **400 Bad Request**
+
 ```json
 {
   "status": 400,
@@ -466,41 +550,36 @@ All endpoints may return the following error responses:
 }
 ```
 
----
-
 ### Swagger/OpenAPI Documentation
 
 Access interactive API documentation at:
 
-```
-http://localhost:8081/swagger-ui.html
-```
-
-OpenAPI specification:
-
-```
-http://localhost:8081/v3/api-docs
-```
-
----
+- **Swagger UI:** http://localhost:8081/swagger-ui.html
+- **OpenAPI Spec:** http://localhost:8081/v3/api-docs
 
 ## Project Structure
 
 ```
 transaction-aggregator/
+├── docker/
+│   ├── mysql/
+│   │   └── init/
+│   └── mockserver/
+│       └── config/
+│           └── transactions.json
 ├── src/
 │   ├── main/
-│   │   ├── java/za/co/capitecbank/assessment
+│   │   ├── java/za/co/capitecbank/assessment/
 │   │   │   ├── config/
-│   │   │   │   ├── WebConfig.java
-│   │   │   │ 
+│   │   │   │   └── WebConfig.java
 │   │   │   ├── controller/
 │   │   │   │   └── AggregatedTransactionController.java
 │   │   │   ├── domain/
-│   │   │   │   ├── RawTransaction.java
-│   │   │   │   ├── AggregatedTransaction.java
-│   │   │   │   ├── TransactionCategory.java
-│   │   │   │   └── CategoryKeyword.java
+│   │   │   │   ├── entity/
+│   │   │   │   │   ├── RawTransaction.java
+│   │   │   │   │   ├── AggregatedTransaction.java
+│   │   │   │   │   ├── TransactionCategory.java
+│   │   │   │   │   └── CategoryKeyword.java
 │   │   │   ├── exception/
 │   │   │   │   ├── GlobalExceptionHandler.java
 │   │   │   │   ├── CustomerNotFoundException.java
@@ -516,30 +595,28 @@ transaction-aggregator/
 │   │   │   │   ├── AggregationService.java
 │   │   │   │   ├── AggregationServiceImpl.java
 │   │   │   │   ├── TxCategorizationEngine.java
-│   │   │   │   ├── TxCategorizationEngineImpl.java
 │   │   │   │   └── CategoryDataLoaderService.java
-│   │   │   ├── source/
-│   │   │   │   ├── TransactionSource.java
-│   │   │   │   ├── FlatFileBasedTransactionsSource.java
-│   │   │   │   ├── XmlBasedTransactionsSource.java
-│   │   │   │   ├── JsonMockServerTransactionsSource.java
-│   │   │   │   └── RandomTransactionsGenerator.java
+│   │   │   ├── transactions/
+│   │   │   │   └── source/
+│   │   │   │       ├── TransactionSource.java
+│   │   │   │       └── impl/
+│   │   │   │           ├── FlatFileBasedTransactionsSource.java
+│   │   │   │           ├── XmlBasedTransactionsSource.java
+│   │   │   │           ├── JsonMockServerTransactionsSource.java
+│   │   │   │           └── RandomTransactionsGenerator.java
 │   │   │   └── DataAggregationApplication.java
 │   │   └── resources/
 │   │       ├── application.yml
 │   │       ├── liquibase/
 │   │       │   └── changelog/
 │   │       │       ├── liquibase-changeLog.xml
-│   │       │       └── db/
-│   │       │           ├── 01-create-tables.xml
-│   │       │  
+│   │       │       └── changes/
+│   │       │           └── 01-create-tables.xml
 │   │       ├── categories.csv
-│   │       └── raw-transactions.xml
-│   │       ├── raw-fixed-length.txt
-│   │       └── transaction-sources.txt
-│   │ 
+│   │       ├── raw-transactions.xml
+│   │       └── raw-fixed-length.txt
 │   └── test/
-│       └── java/za/co/capitecbank/assessment
+│       └── java/za/co/capitecbank/assessment/
 │           ├── controller/
 │           │   └── AggregatedTransactionControllerTest.java
 │           ├── service/
@@ -551,26 +628,24 @@ transaction-aggregator/
 └── README.md
 ```
 
----
-
 ## Data Sources
 
 ### Flat File Format (Fixed-Length Fields)
 
-| Field         | Length | Description                    |
-|---------------|--------|--------------------------------|
-| transactionId | 12     | Unique transaction identifier  |
-| customerId    | 10     | Customer identifier            |
-| description   | 30     | Transaction description        |
-| merchant      | 20     | Merchant name                  |
-| reference     | 15     | Reference number               |
-| type          | 6      | Transaction type (DEBIT/CREDIT)|
-| amount        | 10     | Transaction amount             |
-| currency      | 3      | Currency code (USD, EUR, etc.) |
-| timestamp     | 19     | Transaction timestamp          |
-| channel       | 10     | Transaction channel (POS, WEB) |
-| source        | 10     | Transaction source (CARD, ACH) |
-| filler        | 5      | Reserved space                 |
+| Field             | Length | Description                        |
+|-------------------|--------|------------------------------------|
+| transactionId     | 12     | Unique transaction identifier      |
+| customerId        | 10     | Customer identifier                |
+| description       | 30     | Transaction description            |
+| merchant          | 20     | Merchant name                      |
+| reference         | 15     | Reference number                   |
+| type              | 6      | Transaction type (DEBIT/CREDIT)    |
+| amount            | 10     | Transaction amount                 |
+| currency          | 3      | Currency code (USD, EUR, etc.)     |
+| timestamp         | 19     | Transaction timestamp              |
+| channel           | 10     | Transaction channel (POS, WEB)     |
+| source            | 10     | Transaction source (CARD, ACH)     |
+| filler            | 5      | Reserved space                     |
 
 **Example Flat File Record:**
 
@@ -596,4 +671,29 @@ TXN-00000001CUST-1    Coffee at Starbucks           Starbucks           REF-1234
     <source>CARD</source>
   </transaction>
 </transactions>
+```
+
+### JSON MockServer Format
+
+The MockServer provides transactions in JSON format via REST API:
+
+```json
+{
+  "transactions": [
+    {
+      "transactionId": "tx-55",
+      "customerId": "CUST-2",
+      "accountId": "ACCT-2001",
+      "description": "Coffee Shop Purchase",
+      "merchant": "Local Coffee Shop",
+      "mcc": 5814,
+      "amount": 48.00,
+      "currency": "ZAR",
+      "type": "DEBIT",
+      "status": "POSTED",
+      "timestamp": "2025-12-06T10:15:20",
+      "source": "Scan To Pay"
+    }
+  ]
+}
 ```

@@ -34,39 +34,35 @@ public class JsonMockServerTransactionsSource implements TransactionSource {
     public List<RawTransaction> fetchTransactions() {
         List<RawTransaction> rawTransactions = new ArrayList<>();
 
-        int index = 0;
-        int consecutiveFailures = 0;
-        int maxConsecutiveFailures = 3; // Stop after 3 consecutive 404s
+        try {
+            String url = baseUrl + "/api/transactions";
 
-        while (consecutiveFailures < maxConsecutiveFailures) {
-            String url = baseUrl + "/" + index;
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
 
-            try {
-                ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                        url,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<Map<String, Object>>() {}
-                );
+            Map<String, Object> body = response.getBody();
+            if (body != null && body.containsKey("transactions")) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> transactions = (List<Map<String, Object>>) body.get("transactions");
 
-                Map<String, Object> body = response.getBody();
-                if (body != null && !body.isEmpty()) {
-                    rawTransactions.add(mapToRaw(body));
-                    consecutiveFailures = 0; // Reset on success
-                }
-
-                index++;
-
-            } catch (Exception ex) {
-                // If we get a 404 or any error, increment consecutive failures
-                consecutiveFailures++;
-                index++;
-
-                // Only log if it's not a 404 (which is expected when we reach the end)
-                if (!ex.getMessage().contains("404")) {
-                    System.err.println("Error fetching transaction from endpoint " + (index - 1) + ": " + ex.getMessage());
+                if (transactions != null) {
+                    for (Map<String, Object> txn : transactions) {
+                        try {
+                            rawTransactions.add(mapToRaw(txn));
+                        } catch (Exception e) {
+                            System.err.println("Error mapping transaction: " + e.getMessage());
+                        }
+                    }
                 }
             }
+
+        } catch (Exception ex) {
+            System.err.println("Error fetching transactions from MockServer: " + ex.getMessage());
+            ex.printStackTrace();
         }
 
         return rawTransactions;
@@ -75,7 +71,7 @@ public class JsonMockServerTransactionsSource implements TransactionSource {
     private RawTransaction mapToRaw(Map<String, Object> m) {
         String customerId = String.valueOf(m.getOrDefault("customerId", ""));
         String description = String.valueOf(m.getOrDefault("description", ""));
-        String source = String.valueOf(m.getOrDefault("source", "MULTI_SOURCE"));
+        String source = String.valueOf(m.getOrDefault("source", "MOCK SERVER"));
 
         BigDecimal amount = BigDecimal.ZERO;
         Object amountObj = m.get("amount");
@@ -83,7 +79,7 @@ public class JsonMockServerTransactionsSource implements TransactionSource {
             try {
                 amount = new BigDecimal(amountObj.toString());
             } catch (NumberFormatException e) {
-                // Log warning if needed
+                System.err.println("Invalid amount format: " + amountObj);
                 amount = BigDecimal.ZERO;
             }
         }
@@ -93,7 +89,7 @@ public class JsonMockServerTransactionsSource implements TransactionSource {
         if (timestampObj != null) {
             try {
                 String ts = timestampObj.toString();
-                // Try ISO format first
+                // Try ISO format first (2025-12-06T10:15:20)
                 timestamp = LocalDateTime.parse(ts);
             } catch (DateTimeParseException e1) {
                 try {
@@ -101,11 +97,12 @@ public class JsonMockServerTransactionsSource implements TransactionSource {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                     timestamp = LocalDateTime.parse(timestampObj.toString(), formatter);
                 } catch (Exception e2) {
-                    // Fall back to current time
+                    System.err.println("Invalid timestamp format: " + timestampObj + ", using current time");
                     timestamp = LocalDateTime.now();
                 }
             }
         }
+
         return new RawTransaction(customerId, description, amount, timestamp, source);
     }
 }

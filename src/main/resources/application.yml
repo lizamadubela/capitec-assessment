@@ -8,7 +8,7 @@ spring:
       write-dates-as-timestamps: false
 
   datasource:
-    url: jdbc:mysql://localhost:3308/data_aggregation?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,7 +21,7 @@ spring:
   liquibase:
     enabled: true
     default-schema: data_aggregation
-    change-log: classpath:liquibase/liquibase-changeLog.xml
+    change-log: classpath:liquibase/changelog/liquibase-changeLog.xml
     liquibase-schema: data_aggregation
     drop-first: true
 
@@ -32,5 +32,6 @@ app:
   xml-data-file: classpath:raw-transactions.xml
   category-data: classpath:categories.csv
   flat-file: classpath:raw-fixed-length.txt
+  # Use the mock-server service name so the app reaches it inside the network
   json-server:
-    base-url: http://localhost:3000
+    base-url: http://mock-server:1080

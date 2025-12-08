@@ -1,24 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql-txn-aggregator
+    container_name: mysql-data-aggregation
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${DB_NAME:-transaction_db}
-      MYSQL_USER: ${DB_USERNAME:-txn_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secure_password}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: data_aggregation
     ports:
-      - "${DB_PORT:-3306}:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
     networks:
       - txn-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,26 +26,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: txn-aggregator:0.0.1
+    image: data-aggregation-app:1.0.7
     container_name: txn-aggregator
     restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: ${DB_NAME:-data_aggregation}
-      DB_USERNAME: ${DB_USERNAME:-txn_user}
-      DB_PASSWORD: ${DB_PASSWORD:-secure_password}
-      SERVER_PORT: ${SERVER_PORT:-8081}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SERVER_PORT: 8081
       JAVA_OPTS: >-
-        -Xms512m
-        -Xmx1024m
-        -XX:+UseG1GC
-        -XX:MaxGCPauseMillis=200
+        -Xms512m -Xmx1024m -XX:+UseG1GC -XX:MaxGCPauseMillis=200
     ports:
-      - "${SERVER_PORT:-8081}:8081"
+      - "8081:8081"
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
@@ -65,9 +59,9 @@ services:
     container_name: mock-txn-server
     restart: unless-stopped
     ports:
-      - "8081:1080"
+      - "1080:1080"
     environment:
-      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/initializerJson.json
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/transactions.json
     volumes:
       - ./docker/mockserver/config:/config
     networks:
@@ -75,11 +69,6 @@ services:
 
 volumes:
   mysql_data:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
-    driver: local
 
 networks:
   txn-network:
