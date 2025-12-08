@@ -249,7 +249,7 @@ paths:
         - Transactions
       summary: Get source totals for a customer
       description: Retrieves total amounts grouped by transaction source
-      operationId: getCategoryTotals
+      operationId: getSourceTotals
       parameters:
         - name: customerId
           in: path
