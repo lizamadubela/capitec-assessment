@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
 
 spring:
   jackson:
@@ -8,9 +8,9 @@ spring:
       write-dates-as-timestamps: false
 
   datasource:
-    url: jdbc:mysql://localhost:3308/data_aggregation?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/${DB_NAME:data_aggregation}?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -20,9 +20,9 @@ spring:
 
   liquibase:
     enabled: true
-    default-schema: data_aggregation
+    default-schema: ${DB_NAME:data_aggregation}
     change-log: classpath:liquibase/liquibase-changeLog.xml
-    liquibase-schema: data_aggregation
+    liquibase-schema: ${DB_NAME:data_aggregation}
     drop-first: true
 
 main:
@@ -33,4 +33,4 @@ app:
   category-data: classpath:categories.csv
   flat-file: classpath:raw-fixed-length.txt
   json-server:
-    base-url: http://localhost:3000
+    base-url: ${JSON_SERVER_BASE_URL:http://localhost:3000}

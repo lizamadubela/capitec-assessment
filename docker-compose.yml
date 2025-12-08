@@ -37,30 +37,29 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_NAME: ${DB_NAME:-transaction_db}
+      DB_NAME: ${DB_NAME:-data_aggregation}
       DB_USERNAME: ${DB_USERNAME:-txn_user}
       DB_PASSWORD: ${DB_PASSWORD:-secure_password}
-      SERVER_PORT: ${SERVER_PORT:-8080}
+      SERVER_PORT: ${SERVER_PORT:-8081}
       JAVA_OPTS: >-
         -Xms512m
         -Xmx1024m
         -XX:+UseG1GC
         -XX:MaxGCPauseMillis=200
     ports:
-      - "${SERVER_PORT:-8080}:8080"
+      - "${SERVER_PORT:-8081}:8081"
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
     networks:
       - txn-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
 
-  # Optional: Mock Server for testing external transaction sources
   mock-server:
     image: mockserver/mockserver:latest
     container_name: mock-txn-server
