@@ -1,0 +1,208 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/transactions"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "transactions": [
+          {
+            "transactionId": "tx-55",
+            "customerId": "CUST-2",
+            "accountId": "ACCT-2001",
+            "description": "Coffee Shop Purchase",
+            "merchant": "Local Coffee Shop",
+            "mcc": 5814,
+            "amount": 48.00,
+            "originalAmount": 48.00,
+            "currency": "ZAR",
+            "originalCurrency": "ZAR",
+            "type": "DEBIT",
+            "status": "POSTED",
+            "reference": "STP-20251206-55",
+            "balanceAfter": 1240.50,
+            "channel": "POS",
+            "cardLast4": "4421",
+            "timestamp": "2025-12-06T10:15:20",
+            "processedTimestamp": "2025-12-06T10:15:25",
+            "source": "Scan To Pay"
+          },
+          {
+            "transactionId": "tx-56",
+            "customerId": "CUST-3",
+            "accountId": "ACCT-3001",
+            "description": "Restaurant Payment",
+            "merchant": "Neighborhood Restaurant",
+            "mcc": 5812,
+            "amount": 310.50,
+            "originalAmount": 310.50,
+            "currency": "ZAR",
+            "originalCurrency": "ZAR",
+            "type": "DEBIT",
+            "status": "POSTED",
+            "reference": "ZPR-20251206-56",
+            "balanceAfter": 760.40,
+            "channel": "APP",
+            "cardLast4": "7788",
+            "timestamp": "2025-12-06T12:44:10",
+            "processedTimestamp": "2025-12-06T12:44:20",
+            "source": "Zapper"
+          },
+          {
+            "transactionId": "tx-57",
+            "customerId": "CUST-4",
+            "accountId": "ACCT-4001",
+            "description": "Online Purchase",
+            "merchant": "Online Retailer",
+            "mcc": 5310,
+            "amount": 1299.00,
+            "originalAmount": 1299.00,
+            "currency": "ZAR",
+            "originalCurrency": "ZAR",
+            "type": "DEBIT",
+            "status": "POSTED",
+            "reference": "STP-20251206-57",
+            "balanceAfter": 420.00,
+            "channel": "WEB",
+            "cardLast4": "9012",
+            "timestamp": "2025-12-06T15:22:00",
+            "processedTimestamp": "2025-12-06T15:22:10",
+            "source": "Scan To Pay"
+          },
+          {
+            "transactionId": "tx-201",
+            "customerId": "CUST-1",
+            "accountId": "ACCT-1001",
+            "description": "ATM Cash Withdrawal",
+            "merchant": "Capitec ATM",
+            "mcc": 6011,
+            "amount": 300.00,
+            "originalAmount": 300.00,
+            "currency": "ZAR",
+            "originalCurrency": "ZAR",
+            "type": "DEBIT",
+            "status": "POSTED",
+            "reference": "ATM-20251210-201",
+            "balanceAfter": 950.55,
+            "channel": "ATM",
+            "cardLast4": "1122",
+            "timestamp": "2025-12-10T08:12:30",
+            "processedTimestamp": "2025-12-10T08:12:35",
+            "source": "ATM"
+          },
+          {
+            "transactionId": "tx-202",
+            "customerId": "CUST-2",
+            "accountId": "ACCT-2001",
+            "description": "Cash Deposit",
+            "merchant": "Capitec CDM",
+            "mcc": 6010,
+            "amount": 1200.00,
+            "originalAmount": 1200.00,
+            "currency": "ZAR",
+            "originalCurrency": "ZAR",
+            "type": "CREDIT",
+            "status": "POSTED",
+            "reference": "CDM-20251210-202",
+            "balanceAfter": 3550.00,
+            "channel": "CDM",
+            "cardLast4": null,
+            "timestamp": "2025-12-10T09:05:10",
+            "processedTimestamp": "2025-12-10T09:05:20",
+            "source": "CDM"
+          }
+        ],
+        "totalCount": 25,
+        "page": 1,
+        "pageSize": 5
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/transactions/tx-.*"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "transactionId": "tx-55",
+        "customerId": "CUST-2",
+        "accountId": "ACCT-2001",
+        "description": "Coffee Shop Purchase",
+        "merchant": "Local Coffee Shop",
+        "mcc": 5814,
+        "amount": 48.00,
+        "originalAmount": 48.00,
+        "currency": "ZAR",
+        "originalCurrency": "ZAR",
+        "type": "DEBIT",
+        "status": "POSTED",
+        "reference": "STP-20251206-55",
+        "balanceAfter": 1240.50,
+        "channel": "POS",
+        "cardLast4": "4421",
+        "timestamp": "2025-12-06T10:15:20",
+        "processedTimestamp": "2025-12-06T10:15:25",
+        "source": "Scan To Pay"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/api/transactions",
+      "queryStringParameters": {
+        "customerId": ["CUST-.*"]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "transactions": [
+          {
+            "transactionId": "tx-55",
+            "customerId": "CUST-2",
+            "accountId": "ACCT-2001",
+            "description": "Coffee Shop Purchase",
+            "merchant": "Local Coffee Shop",
+            "mcc": 5814,
+            "amount": 48.00,
+            "currency": "ZAR",
+            "type": "DEBIT",
+            "status": "POSTED",
+            "timestamp": "2025-12-06T10:15:20"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/api/transactions"
+    },
+    "httpResponse": {
+      "statusCode": 201,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "transactionId": "tx-new-001",
+        "status": "CREATED",
+        "message": "Transaction created successfully"
+      }
+    }
+  }
+]
