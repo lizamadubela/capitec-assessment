@@ -46,13 +46,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/transactions/{customerId}/categories:
     get:
@@ -90,13 +90,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/transactions/{customerId}/range:
     get:
@@ -144,19 +144,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Customer not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
 
   /api/transactions/{customerId}/{transactionId}:
     get:
@@ -194,13 +194,98 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/transactions/{customerId}/search:
+    post:
+      tags:
+        - Transactions
+      summary: Search for transactions that match the specific search text
+      description: Retrieves multiple transactions by description, source or category
+      operationId: searchTransactions
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+      requestBody:
+         content:
+           application/json:
+             schema:
+               $ref: '#/components/schemas/TransactionSearch'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregatedTransaction'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/transactions/{customerId}/sources:
+    get:
+      tags:
+        - Transactions
+      summary: Get source totals for a customer
+      description: Retrieves total amounts grouped by transaction source
+      operationId: getCategoryTotals
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          description: Customer ID in format CUST-XXXX
+          schema:
+            type: string
+            pattern: '^CUST-\d+$'
+            example: CUST-1234
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+                  format: decimal
+                example:
+                  GROCERIES: -2450.50
+                  SALARY: 15000.00
+                  ENTERTAINMENT: -850.75
+                  UTILITIES: -1200.00
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -248,19 +333,22 @@ components:
           description: Transaction category
           example: GROCERIES
 
-    Error:
+    TransactionSearch:
       type: object
       required:
-        - timestamp
+        - searchParameter
+      properties:
+        searchParameter:
+          type: string
+          example: Online
+
+    ErrorResponse:
+      type: object
+      required:
         - status
         - error
         - message
-        - path
       properties:
-        timestamp:
-          type: string
-          format: date-time
-          example: '2025-11-22T14:30:45'
         status:
           type: integer
           example: 404
@@ -270,6 +358,3 @@ components:
         message:
           type: string
           example: Customer not found
-        path:
-          type: string
-          example: /api/transactions/CUST-9999
