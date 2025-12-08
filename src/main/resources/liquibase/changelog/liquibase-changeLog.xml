@@ -8,5 +8,5 @@
 		http://www.liquibase.org/xml/ns/dbchangelog-ext
 		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<include file="changelog/0-1-create-tables.xml" relativeToChangelogFile="true"/>
+	<include file="db/0-1-create-tables.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

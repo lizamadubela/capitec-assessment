@@ -173,7 +173,7 @@ class AggregatedTransactionControllerTest {
         String customerId = "CUST-1";
         String searchParam = "grocery";
         List<za.co.capitecbank.assessment.domain.entity.AggregatedTransaction> mockEntityTransactions =
-                Arrays.asList(createMockEntityTransaction(1L, "Spar", new BigDecimal("150.50")));
+                List.of(createMockEntityTransaction(1L, "Spar", new BigDecimal("150.50")));
 
         when(aggregationService.searchTransactions(customerId, searchParam))
                 .thenReturn(mockEntityTransactions);

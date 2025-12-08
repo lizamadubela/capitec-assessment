@@ -209,7 +209,6 @@ public class CategoryDataLoaderService {
         return cachedCategories;
     }
 
-    //TODO this need to be used by multiple sources
     public TransactionCategory categorize(String description, BigDecimal amount) {
         if (description == null || description.isEmpty()) {
             return getCategoryByName("OTHER");

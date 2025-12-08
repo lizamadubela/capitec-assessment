@@ -20,14 +20,13 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class RandomTransactionsGenerator implements TransactionSource {
 
-    private List<String> transactionDescriptions = new ArrayList<>();
-    private List<String> transactionSources = new ArrayList<>();
-
-    private final int NUMBER_OF_TRANSACTIONS = 30;
+    private final List<String> transactionDescriptions = new ArrayList<>();
+    private final List<String> transactionSources = new ArrayList<>();
 
 
     @Override
     public List<RawTransaction> fetchTransactions() {
+        int NUMBER_OF_TRANSACTIONS = 30;
         return generateTransactions(NUMBER_OF_TRANSACTIONS);
     }
 
