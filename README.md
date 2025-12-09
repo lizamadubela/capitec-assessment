@@ -100,24 +100,6 @@ git clone https://github.com/lizamadubela/capitec-assessment.git
 cd transaction-aggregator
 ```
 
-### 2. Project Structure
-
-Ensure your project has the following structure for Docker setup:
-
-```
-transaction-aggregator/
-├── docker/
-│   ├── mysql/
-│   │   └── init/           # MySQL initialization scripts (optional)
-│   └── mockserver/
-│       └── config/
-│           └── transactions.json    # MockServer expectations
-├── docker-compose.yml
-├── Dockerfile
-├── pom.xml
-└── src/
-```
-
 ## Configuration
 
 ### Application Configuration
