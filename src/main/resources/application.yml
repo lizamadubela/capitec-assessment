@@ -7,6 +7,12 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+#  datasource:
+#    url: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
   datasource:
     url: jdbc:mysql://mysql:3306/data_aggregation?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
@@ -35,3 +41,14 @@ app:
   # Use the mock-server service name so the app reaches it inside the network
   json-server:
     base-url: http://mock-server:1080
+
+api:
+  key:
+    name: X-API-KEY
+    value: 8a716002-ba9a-42c2-a3f4-b045f05f6e7a
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.web: DEBUG
+    org.springframework.security.authentication: DEBUG
